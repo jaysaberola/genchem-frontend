@@ -1,0 +1,675 @@
+/* GenChem PH – matches genchemph reference (Canvas / drone demo) */
+
+:root {
+  --genchem-font: "Cooper", sans-serif;
+  --genchem-red: #9b2d1f;
+  --genchem-red-bright: #f60000;
+}
+
+.genchemph,
+.genchemph * {
+  font-family: var(--genchem-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.genchem-hero-shell {
+  position: relative;
+  overflow: visible;
+}
+
+.genchem-hero-shell--overlay {
+  min-height: 420px;
+}
+
+.genchem-main-with-header-offset {
+  padding-top: 96px;
+}
+
+.genchem-main-with-floating-logo {
+  padding-top: 88px;
+}
+
+.genchemph main.flex-grow-1 {
+  background: #ffffff;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hide legacy decorative heading letters (e.g. "W" behind What's New) */
+.genchemph .heading-block::before,
+.genchemph .heading-block-start::before {
+  display: none !important;
+}
+
+/* ---- Floating pill header (drone.css + reference HTML) ---- */
+.genchemph #header {
+  --cnvs-header-height: 60px;
+  position: relative;
+  z-index: 299;
+  background: transparent;
+  border-bottom: 0;
+}
+
+.genchemph #header #header-wrap {
+  position: fixed !important;
+  top: 15px;
+  left: 0;
+  right: 0;
+  z-index: 299;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+
+.genchemph #header.genchem-header-static #header-wrap {
+  top: 12px;
+}
+
+.genchemph #header #header-wrap .container,
+.genchemph #header #header-wrap .container * {
+  pointer-events: auto;
+}
+
+.genchemph #header.transparent-header.floating-header .container {
+  background: #ffffff;
+  border-radius: 23rem;
+  max-width: calc(100% - 30px);
+  padding: 0 24px 0 28px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.14);
+}
+
+.genchemph #header .header-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: var(--cnvs-header-height);
+}
+
+.genchemph #logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.genchemph #logo.gemchem-logo a {
+  display: inline-flex;
+  align-items: center;
+}
+
+.genchemph #logo.gemchem-logo img,
+.genchemph .genchem-brand-logo,
+.floating-logo__img {
+  display: block;
+  object-fit: contain;
+  background: transparent;
+}
+
+.genchemph #logo.gemchem-logo img,
+.genchemph .genchem-brand-logo {
+  height: var(--cnvs-header-height);
+  max-height: var(--cnvs-header-height);
+  max-width: 200px;
+  width: auto;
+  transition: transform 0.5s ease;
+}
+
+.genchemph #logo.gemchem-logo:hover img {
+  transform: rotate(360deg);
+}
+
+.genchemph .primary-menu {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.genchemph .header-misc {
+  order: 6;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.genchemph .primary-menu-trigger {
+  display: none;
+  flex-shrink: 0;
+}
+
+.genchemph .primary-menu .menu-container {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2px;
+}
+
+.genchemph .primary-menu .menu-item {
+  position: relative;
+  list-style: none;
+}
+
+.genchemph .primary-menu .menu-link {
+  display: block;
+  padding: 12px 13px !important;
+  text-decoration: none !important;
+  font-family: "Cooper", var(--genchem-font);
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: #333333 !important;
+  text-transform: none;
+  letter-spacing: 0;
+  transition: color 0.2s ease;
+}
+
+.genchemph .primary-menu .menu-link div {
+  display: block;
+}
+
+.genchemph .primary-menu .menu-item.current > .menu-link,
+.genchemph .primary-menu .menu-link.active {
+  color: var(--genchem-red) !important;
+  font-weight: 600;
+}
+
+.genchemph .primary-menu .menu-link:hover {
+  color: var(--genchem-red) !important;
+}
+
+.genchemph .primary-menu.with-arrows .menu-item:has(> .sub-menu-container) > .menu-link div::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 8px;
+  vertical-align: middle;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+}
+
+.genchemph .primary-menu .sub-menu-container {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 220px;
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  background: #ffffff;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease;
+  z-index: 400;
+}
+
+.genchemph .primary-menu .menu-item:hover > .sub-menu-container {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.genchemph .primary-menu .sub-menu-container .menu-link {
+  color: #333333 !important;
+  padding: 10px 18px !important;
+  font-size: 0.95rem;
+}
+
+.genchemph .primary-menu .sub-menu-container .menu-link.active,
+.genchemph .primary-menu .sub-menu-container .menu-item.current > .menu-link {
+  color: #9b2d1f !important;
+  font-weight: 600;
+}
+
+.genchemph .primary-menu .sub-menu-container .menu-link:hover {
+  color: #9b2d1f !important;
+  background: rgba(155, 45, 31, 0.08);
+}
+
+.genchemph #top-call {
+  color: #333333;
+  gap: 0.5rem;
+}
+
+.genchemph #top-call .genchem-header-phones {
+  line-height: 1.15;
+}
+
+.genchemph #top-call .genchem-header-phone {
+  display: block;
+  font-family: "Cooper", var(--genchem-font);
+  font-size: 0.9375rem;
+  line-height: 1.25;
+  font-weight: 400;
+  color: #333333;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.genchemph #top-call .genchem-header-phone:first-child {
+  margin-bottom: -4px;
+}
+
+.genchemph #top-call .genchem-header-phone:hover {
+  color: var(--genchem-red);
+}
+
+.genchemph #top-call .calling-icon {
+  width: 36px;
+  height: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+  transition: transform 0.5s ease;
+}
+
+.genchemph div#top-call:hover img.py-2.calling-icon {
+  transform: rotate(360deg);
+  transition: transform 0.5s ease;
+  animation-iteration-count: infinite;
+}
+
+/* Hero CTA – red default; dark pill + white border on hover */
+.genchemph .genchem-hero-cta {
+  background: #f60000 !important;
+  color: #ffffff !important;
+  border: 2px solid transparent !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+}
+
+.genchemph .genchem-hero-cta:hover,
+.genchemph .genchem-hero-cta:focus,
+.genchemph .genchem-hero-cta:focus-visible {
+  background: rgba(0, 0, 0, 0.55) !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.genchemph .cnvs-hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.cnvs-hamburger-box {
+  width: 18px;
+  height: 14px;
+  position: relative;
+  display: inline-block;
+}
+
+.cnvs-hamburger-inner,
+.cnvs-hamburger-inner::before,
+.cnvs-hamburger-inner::after {
+  position: absolute;
+  width: 18px;
+  height: 2px;
+  background-color: #333333;
+  border-radius: 999px;
+  transition: transform 0.2s ease;
+}
+
+.cnvs-hamburger-inner {
+  top: 50%;
+  margin-top: -1px;
+}
+
+.cnvs-hamburger-inner::before,
+.cnvs-hamburger-inner::after {
+  content: "";
+  left: 0;
+}
+
+.cnvs-hamburger-inner::before {
+  top: -6px;
+}
+
+.cnvs-hamburger-inner::after {
+  bottom: -6px;
+}
+
+.genchemph .primary-menu-trigger-active .cnvs-hamburger-inner {
+  transform: rotate(45deg);
+}
+
+.genchemph .primary-menu-trigger-active .cnvs-hamburger-inner::before {
+  top: 0;
+  opacity: 0;
+}
+
+.genchemph .primary-menu-trigger-active .cnvs-hamburger-inner::after {
+  bottom: 0;
+  transform: rotate(-90deg);
+}
+
+/* Page hero sits under floating header */
+.genchem-page-banner {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  margin-top: 0;
+}
+
+.genchem-page-banner__slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.9s ease-in-out;
+}
+
+.genchem-page-banner__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1;
+}
+
+.public-page-content {
+  margin-top: 0;
+}
+
+.public-page-content .about-us-page {
+  margin-top: 0;
+}
+
+@media (max-width: 991px) {
+  .genchemph #header #header-wrap {
+    top: 10px;
+  }
+
+  .genchemph #header .header-row {
+    min-height: 64px;
+  }
+
+  .genchemph #logo.gemchem-logo img {
+    max-height: 48px;
+    height: 48px;
+  }
+
+  .genchemph .primary-menu-trigger {
+    display: flex;
+    margin-left: auto;
+    order: 5;
+  }
+
+  .genchemph .header-misc {
+    display: none !important;
+  }
+
+  .genchemph .primary-menu {
+    display: none;
+    order: 10;
+    flex: 1 1 100%;
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: 78px;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    z-index: 298;
+  }
+
+  body.primary-menu-open .genchemph .primary-menu {
+    display: block;
+  }
+
+  .genchemph .primary-menu .menu-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .genchemph .primary-menu .menu-link {
+    color: #333333 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 1.05rem;
+  }
+
+  .genchemph .primary-menu .menu-item.current > .menu-link {
+    color: var(--genchem-red) !important;
+  }
+
+  .genchemph .primary-menu .sub-menu-container {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    display: none;
+    box-shadow: none;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 0;
+  }
+
+  .genchemph .primary-menu .menu-item.open > .sub-menu-container {
+    display: block;
+  }
+
+  .genchemph .primary-menu .sub-menu-container .menu-link {
+    padding-left: 32px !important;
+    color: #555555 !important;
+  }
+}
+
+/* ---- GenChem page theme styles ---- */
+.about-us-low::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.about-us-high {
+  position: relative;
+  z-index: 2;
+  color: white;
+}
+
+.genchemph .nav-tabs .nav-link .text-uppercase {
+  background-color: #ffffff;
+  padding: 10px;
+  min-width: 210px;
+  border-radius: 20px;
+  color: #9b2d1f;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  border: solid 4px #9b2d1f;
+}
+
+.genchemph .nav-tabs .nav-link.active .text-uppercase {
+  background-color: #9b2d1f;
+  padding: 10px;
+  min-width: 210px;
+  border-radius: 20px;
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  border: solid 4px #9b2d1f;
+}
+
+#demo-drone-tab .nav-item .nav-link.active::after {
+  border-bottom: 10px solid #9b2d1f !important;
+}
+
+#demo-drone-tab .nav-link {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+}
+
+#gc-tab-content > .tab-pane:not(.show):not(.active) {
+  display: none;
+}
+
+#gc-tab-content > .tab-pane.active {
+  display: block;
+}
+
+/* Canvas CMS buttons (GrapesJS Learn More etc.) */
+.cms-content .button,
+.public-page-content .button {
+  display: inline-block;
+  cursor: pointer;
+  padding: 0.625rem 1.625rem;
+  font-family: "Cooper", var(--genchem-font, sans-serif);
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: center;
+  text-decoration: none !important;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: background 0.2s ease, color 0.2s ease, outline-offset 0.1s ease;
+}
+
+.cms-content .button.rounded,
+.public-page-content .button.rounded {
+  border-radius: 999px;
+}
+
+.cms-content .button.button-light,
+.public-page-content .button.button-light {
+  background-color: rgba(255, 255, 255, 0.92);
+  color: #212529 !important;
+}
+
+.cms-content .button.button-light:hover,
+.cms-content .button.button-light:focus,
+.public-page-content .button.button-light:hover,
+.public-page-content .button.button-light:focus {
+  background-color: #212529;
+  color: #ffffff !important;
+}
+
+.cms-content .button.button-offset:is(:hover, :focus),
+.public-page-content .button.button-offset:is(:hover, :focus) {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.cms-content .bg-dark-red .text-white,
+.cms-content .bg-dark-red p,
+.cms-content .bg-dark-red h1,
+.cms-content .bg-dark-red h2,
+.cms-content .bg-dark-red h3,
+.public-page-content .bg-dark-red .text-white,
+.public-page-content .bg-dark-red p,
+.public-page-content .bg-dark-red h1,
+.public-page-content .bg-dark-red h2,
+.public-page-content .bg-dark-red h3 {
+  color: #ffffff !important;
+}
+
+.genchemph #demo-drone-tab .nav-link h3 {
+  background-color: #ffffff;
+  padding: 10px;
+  min-width: 210px;
+  border-radius: 20px;
+  color: #9b2d1f;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  border: solid 4px #9b2d1f;
+  pointer-events: none;
+}
+
+.genchemph #demo-drone-tab .nav-link.active h3 {
+  background-color: #9b2d1f;
+  color: #ffffff;
+}
+
+.bg-dark-red {
+  background-color: #9b2d1f;
+}
+
+.bg-main-red {
+  background-color: #f60000;
+}
+
+.text-main-red {
+  color: #f60000;
+}
+
+.text-dark-red {
+  color: #9b2d1f;
+}
+
+.hover-scale:not(.active):hover {
+  transform: scale(1.02);
+  transition: ease 0.4s all;
+}
+
+/* Logo centered on the seam between banner and content */
+.floating-logo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateY(50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.floating-logo__mark {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+  background: transparent;
+}
+
+.floating-logo__img {
+  width: clamp(220px, 32vw, 300px);
+  height: auto;
+  max-height: 168px;
+  mix-blend-mode: screen;
+}
+
+.about-us-page .floating-logo__img {
+  width: clamp(240px, 34vw, 320px);
+  max-height: 180px;
+}
+
+.about-us-page .about-us-low {
+  position: relative;
+}
+
+.about-us-page .text-dark {
+  color: #333333 !important;
+}
+
+.about-us-page .about-us-high .text-dark,
+.about-us-page .about-us-high p,
+.about-us-page .about-us-high li {
+  color: #333333 !important;
+}

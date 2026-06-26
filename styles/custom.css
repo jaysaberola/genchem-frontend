@@ -1,0 +1,166 @@
+/* Custom CSS by Jeff */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Noto+Serif:ital,wght@0,100..900;1,100..900&family=Tenor+Sans&display=swap" rel="stylesheet');
+
+body {
+  font-family: 'Tenor Sans', 'Fredoka', 'Noto Serif', sans-serif !important;
+}
+
+.heading-block {
+    position: relative
+}
+
+.heading-block::before {
+    content: attr(data-heading);
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    color: #e9ecef;
+    z-index: -1;
+    font-weight: bold;
+    font-size: 90px;
+    line-height: .3;
+}
+
+.text-orange {
+    color: #ff7b00;
+}
+
+.heading-block-start {
+    position: relative
+}
+
+.heading-block-start::before {
+    content: attr(data-heading);
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #e9ecef;
+    z-index: -1;
+    font-weight: bold;
+    font-size: 90px;
+    line-height: .3;
+}
+
+.animate-hov {
+    transition: all 0.3s ease;
+    padding: 0px;
+}
+
+.animate-hov:hover {
+    transform: scale(1.05);
+    background-color: #f5f5f5;
+}
+
+.animate-hov:hover h2,
+.animate-hov:hover h3 {
+    color: #ff7b00;
+}
+
+.animate-hov .image-responsive {
+    max-height: 170px;
+    overflow-y: hidden;
+}
+
+img.proj-image {
+    transform: translate(0px, -75px);
+}
+
+.cutter-section {
+    margin-top: 7rem;
+    margin-bottom: 7rem;
+}
+
+.cutter-title {
+    margin-bottom: 4rem;
+}
+
+.projects-gallery img.animate-hov {
+    max-width: 600px;
+}
+
+.products-container-lines .card.rounded-2.shadow-sm.animate-hov {
+    min-height: 305px;
+}
+
+@media only screen and (max-width: 720px) {
+    .base-content .fs-5 {
+        font-size: .9rem !important;
+    } 
+
+    .base-content h2 {
+        font-size: 1.5rem !important;
+    }
+
+    .base-content .fs-6 {
+        font-size: .8rem !important;
+    }
+
+    .base-content .products-container-lines .card.rounded-2.shadow-sm.animate-hov {
+        min-height: 385px;
+    }
+
+    .base-content .about-us-base-section {
+        max-height: unset !important;
+    }
+}
+
+/* grapejs css hack */
+.button.button-border {
+    border: none !important;
+    text-decoration: none;
+}
+
+.button.button-border > div {
+    border: 2px solid white;
+    border-radius: 5px;
+    color: white;
+    transition: all .2s ease-in-out;
+    padding: 8px 14px;
+    font-weight: 600;
+    max-width: fit-content;
+    transform: translate(0px, 18px);
+    cursor: pointer;
+}
+.button.button-border:hover > div{
+    background-color: white;
+    color: #444;
+}
+
+.button.button-3d {
+  display: inline-block;
+  background-color: #1e3a5f;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 13px 36px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  box-shadow:
+    0 4px 0 #0d2240,
+    0 5px 4px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+  text-decoration: none;
+}
+
+.button.button-3d:hover {
+  background-color: #254d7a;
+  opacity: 0.9;
+}
+
+.gjs-content-wrapper h1,
+.gjs-content-wrapper h2,
+.gjs-content-wrapper h3, 
+.gjs-content-wrapper h4, 
+.gjs-content-wrapper h5, 
+.gjs-content-wrapper h6 {
+    font-weight: 600;
+}
