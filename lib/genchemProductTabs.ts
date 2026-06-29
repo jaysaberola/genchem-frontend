@@ -6,8 +6,12 @@ export const GENCHEM_PRODUCT_TABS = [
 
 export type GenchemProductTabSlug = (typeof GENCHEM_PRODUCT_TABS)[number]["slug"];
 
-const SLUG_BY_INDEX = new Map(GENCHEM_PRODUCT_TABS.map((t) => [t.index, t.slug]));
-const INDEX_BY_SLUG = new Map(GENCHEM_PRODUCT_TABS.map((t) => [t.slug, t.index]));
+const SLUG_BY_INDEX = new Map<number, GenchemProductTabSlug>(
+  GENCHEM_PRODUCT_TABS.map((t) => [t.index, t.slug]),
+);
+const INDEX_BY_SLUG = new Map<GenchemProductTabSlug, number>(
+  GENCHEM_PRODUCT_TABS.map((t) => [t.slug, t.index]),
+);
 
 const LEGACY_HASH: Record<string, GenchemProductTabSlug> = {
   "tab-1": "pvc-resins",
