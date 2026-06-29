@@ -2,13 +2,40 @@
  * Tab switcher for GrapesJS "Our Products" section (PVC Resins / PVC Stabilizers).
  * GrapesJS preview uses onclick="gcSwitchTab(n)" — expose on window for CMS HTML.
  */
-export function gcSwitchTab(tabNumber: number): void {
+import {
+  GenchemProductTabSlug,
+  getProductTabIndex,
+  getProductTabSlug,
+  isProductsPagePath,
+  normalizeProductTabHash,
+  parseProductTabFromHref,
+  productTabHref,
+} from "@/lib/genchemProductTabs";
+
+export {
+  GENCHEM_PRODUCT_TABS,
+  getProductTabIndex,
+  getProductTabSlug,
+  isProductsPagePath,
+  normalizeProductTabHash,
+  parseProductTabFromHref,
+  productTabHref,
+} from "@/lib/genchemProductTabs";
+export type { GenchemProductTabSlug } from "@/lib/genchemProductTabs";
+
+export function gcSwitchTab(tab: number | string): void {
   if (typeof document === "undefined") return;
 
-  const tabIndex = Number(tabNumber);
-  if (!Number.isFinite(tabIndex) || tabIndex < 1) return;
+  const tabIndex =
+    typeof tab === "number"
+      ? tab
+      : getProductTabIndex(tab);
 
-  const tabId = `tab-${tabIndex}`;
+  if (tabIndex == null || !Number.isFinite(tabIndex) || tabIndex < 1) return;
+
+  const tabSlug = getProductTabSlug(tabIndex);
+  const tabId = tabSlug ?? `tab-${tabIndex}`;
+
   const tabContent =
     document.getElementById("gc-tab-content") ??
     document.querySelector<HTMLElement>(".tab-content");
@@ -20,6 +47,7 @@ export function gcSwitchTab(tabNumber: number): void {
 
     const target =
       document.getElementById(tabId) ??
+      document.getElementById(`tab-${tabIndex}`) ??
       tabContent.querySelector<HTMLElement>(`#${CSS.escape(tabId)}`);
 
     if (target) {
@@ -36,11 +64,61 @@ export function gcSwitchTab(tabNumber: number): void {
       link.setAttribute("aria-selected", isActive ? "true" : "false");
     });
   }
+
+  const pane =
+    document.getElementById(tabId) ??
+    document.getElementById(`tab-${tabIndex}`);
+
+  if (pane) {
+    requestAnimationFrame(() => {
+      pane.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+}
+
+export function activateTabFromHash(): void {
+  if (typeof document === "undefined") return;
+
+  const slug = normalizeProductTabHash(window.location.hash);
+  if (!slug) return;
+
+  const tabNumber = getProductTabIndex(slug);
+  if (tabNumber == null) return;
+
+  if (typeof window.gcSwitchTab === "function") {
+    window.gcSwitchTab(tabNumber);
+    return;
+  }
+
+  gcSwitchTab(tabNumber);
+}
+
+export function navigateToProductTab(href: string): void {
+  const tabNumber = parseProductTabFromHref(href);
+  if (tabNumber == null) {
+    window.location.href = href;
+    return;
+  }
+
+  const slug = getProductTabSlug(tabNumber);
+  if (!slug) {
+    window.location.href = href;
+    return;
+  }
+
+  const target = productTabHref(tabNumber);
+
+  if (isProductsPagePath(window.location.pathname)) {
+    window.location.href = `/public/products?t=${Date.now()}#${slug}`;
+    return;
+  }
+
+  window.location.href = target;
 }
 
 declare global {
   interface Window {
-    gcSwitchTab?: (tabNumber: number) => void;
+    gcSwitchTab?: (tab: number | string) => void;
   }
 }
 
@@ -51,14 +129,14 @@ function resolveTabNumberFromNav(tabNav: Element, tabBtn: Element): number | nul
   const idx = links.indexOf(tabBtn as HTMLElement);
   if (idx >= 0) return idx + 1;
 
+  const fromData = (tabBtn as HTMLElement).dataset.genchemTab;
+  if (fromData) {
+    const fromSlug = getProductTabIndex(fromData);
+    if (fromSlug != null) return fromSlug;
+  }
+
   if (tabBtn.id === "canvas-tab-2") return 2;
   if (tabBtn.id === "canvas-tab-1") return 1;
-
-  const fromData = (tabBtn as HTMLElement).dataset.genchemTab;
-  if (fromData != null) {
-    const n = Number(fromData);
-    if (Number.isFinite(n) && n >= 1) return n;
-  }
 
   return null;
 }
@@ -92,11 +170,11 @@ export function initGenchemProductTabs(): void {
 export function registerGenchemTabs(): () => void {
   window.gcSwitchTab = gcSwitchTab;
 
-  document.addEventListener("click", handleProductTabClick);
+  document.addEventListener("click", handleProductTabClick, true);
   initGenchemProductTabs();
 
   return () => {
     delete window.gcSwitchTab;
-    document.removeEventListener("click", handleProductTabClick);
+    document.removeEventListener("click", handleProductTabClick, true);
   };
 }

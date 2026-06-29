@@ -86,11 +86,10 @@ export const getFooter = () => {
 };
 
 export const sendContactMessage = (payload: {
-  inquiry_type: string;
-  first_name: string;
-  last_name: string;
+  name: string;
+  company?: string;
   email: string;
-  contact_number: string;
+  contact: string;
   message: string;
 }) => {
   return axiosInstance.post("/contact", payload);

@@ -36,7 +36,7 @@ export default function PublicPageView({ pageData }: PublicPageViewProps) {
       {/* Rendered CMS HTML content */}
       {htmlContent ? (
         <div
-          className="public-page-content"
+          className="public-page-content cms-content"
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       ) : (
@@ -52,14 +52,18 @@ export async function getServerSideProps(context: any) {
   const { page } = context.params;
 
   try {
-    const res = await getPublicPageBySlug(page);
-    const pageData = res.data ?? null;
+    const [pageRes, footerRes] = await Promise.all([
+      getPublicPageBySlug(page),
+      getPublicPageBySlug("footer"),
+    ]);
+    const pageData = pageRes.data ?? null;
 
     if (!pageData) return { notFound: true };
 
     return {
       props: {
         pageData,
+        footerData: footerRes.data ?? null,
         layout: {
           fullWidth: true,
           hideFooter: page === "footer",

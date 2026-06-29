@@ -1,7 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { getActiveMenu, PublicMenu } from "@/services/publicPageService";
+import { getActiveMenu, PublicMenu, PublicMenuItem } from "@/services/publicPageService";
+import { GENCHEM_FALLBACK_MENU_ITEMS } from "@/lib/genchemDefaultMenu";
+import { GENCHEM_PRODUCT_TABS } from "@/lib/genchemProductTabs";
 import MenuItem from "./_MenuItem";
+
+function normalizeMenuItems(items: PublicMenuItem[] | undefined): PublicMenuItem[] {
+  if (!items?.length) return GENCHEM_FALLBACK_MENU_ITEMS;
+
+  return items.map((item) => {
+    if (item.label !== "Products") return item;
+
+    const children = item.children?.length
+      ? item.children.map((child, index) => ({
+          ...child,
+          label:
+            child.label === "Products"
+              ? index === 0
+                ? "PVC Resins"
+                : "PVC Stabilizers"
+              : child.label,
+          target: `/public/products#${GENCHEM_PRODUCT_TABS[index]?.slug ?? (index === 0 ? "pvc-resins" : "pvc-stabilizers")}`,
+        }))
+      : GENCHEM_FALLBACK_MENU_ITEMS.find((m) => m.label === "Products")?.children ?? [];
+
+    return { ...item, children };
+  });
+}
 
 export default function Menu({
   isMobile = false,
@@ -11,19 +36,22 @@ export default function Menu({
   onNavigate?: () => void;
 }) {
   const router = useRouter();
-  const [menu, setMenu] = useState<PublicMenu | null>(null);
+  const [items, setItems] = useState<PublicMenuItem[]>(GENCHEM_FALLBACK_MENU_ITEMS);
 
   useEffect(() => {
     getActiveMenu()
-      .then((res) => setMenu(res.data.data))
-      .catch(() => setMenu(null));
+      .then((res) => {
+        const menu = res.data.data as PublicMenu | null;
+        setItems(normalizeMenuItems(menu?.items));
+      })
+      .catch(() => {
+        setItems(GENCHEM_FALLBACK_MENU_ITEMS);
+      });
   }, []);
-
-  if (!menu) return null;
 
   return (
     <>
-      {menu.items.map((item) => (
+      {items.map((item) => (
         <MenuItem
           key={item.id}
           item={item}

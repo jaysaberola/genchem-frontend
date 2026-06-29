@@ -1,6 +1,32 @@
 import { useState } from "react";
 import Link from "next/link";
 import { PublicMenuItem } from "@/services/publicPageService";
+import { navigateToProductTab, parseProductTabFromHref } from "@/lib/genchemTabs";
+import { getProductTabSlug, normalizeProductTabHash } from "@/lib/genchemProductTabs";
+
+function normalizePath(url: string): string {
+  try {
+    return new URL(url, "http://local").pathname;
+  } catch {
+    return url;
+  }
+}
+
+function isProductTabLinkActive(childTarget: string, currentPath: string): boolean {
+  const tabNumber = parseProductTabFromHref(childTarget);
+  if (tabNumber == null) {
+    return normalizePath(currentPath) === normalizePath(childTarget);
+  }
+
+  if (normalizePath(currentPath) !== "/public/products") return false;
+
+  const hashPart = currentPath.includes("#") ? currentPath.slice(currentPath.indexOf("#")) : "";
+  const activeSlug = normalizeProductTabHash(hashPart);
+  const childSlug = getProductTabSlug(tabNumber);
+
+  if (activeSlug && childSlug) return activeSlug === childSlug;
+  return tabNumber === 1;
+}
 
 export default function MenuItem({
   item,
@@ -19,25 +45,12 @@ export default function MenuItem({
   const isInternal = item.type === "page";
   const hasChildren = item.children && item.children.length > 0;
 
-  const normalizePath = (url: string) => {
-    try {
-      return new URL(url, "http://local").pathname;
-    } catch {
-      return url;
-    }
-  };
-
   const hrefPath = normalizePath(href);
   const isCurrent =
     isInternal &&
     (currentPath === hrefPath || currentPath.startsWith(hrefPath + "/"));
 
-  const isChildCurrent =
-    hasChildren &&
-    item.children!.some((child) => {
-      const childPath = normalizePath(child.target);
-      return currentPath === childPath || currentPath.startsWith(childPath + "/");
-    });
+  const isChildCurrent = hasChildren && normalizePath(currentPath) === normalizePath(href);
 
   const isHighlighted = isCurrent || isChildCurrent;
 
@@ -46,6 +59,15 @@ export default function MenuItem({
       e.preventDefault();
       setOpen((prev) => !prev);
       return;
+    }
+    if (isMobile) onNavigate?.();
+  };
+
+  const handleChildClick = (e: React.MouseEvent, childTarget: string) => {
+    const tabNumber = parseProductTabFromHref(childTarget);
+    if (tabNumber != null) {
+      e.preventDefault();
+      navigateToProductTab(childTarget);
     }
     if (isMobile) onNavigate?.();
   };
@@ -71,13 +93,28 @@ export default function MenuItem({
       {hasChildren && (
         <ul className="sub-menu-container border-0">
           {item.children!.map((child) => (
-            <MenuItem
-              key={child.id}
-              item={child}
-              currentPath={currentPath}
-              isMobile={isMobile}
-              onNavigate={onNavigate}
-            />
+            <li key={`${child.id}-${child.target}`} className="menu-item">
+              {child.type === "page" ? (
+                <Link
+                  href={child.target}
+                  className={`menu-link ${isProductTabLinkActive(child.target, currentPath) ? "active" : ""}`}
+                  style={{ textDecoration: "none" }}
+                  onClick={(e) => handleChildClick(e, child.target)}
+                >
+                  <div>{child.label}</div>
+                </Link>
+              ) : (
+                <a
+                  href={child.target}
+                  className="menu-link"
+                  style={{ textDecoration: "none" }}
+                  rel="noopener noreferrer"
+                  onClick={(e) => handleChildClick(e, child.target)}
+                >
+                  <div>{child.label}</div>
+                </a>
+              )}
+            </li>
           ))}
         </ul>
       )}

@@ -1,7 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css"; //AdminLayout
 import "@fortawesome/fontawesome-free/css/all.min.css"; //AdminLayout
 import "@/styles/custom.css"; // Custom CSS
-import "@/styles/footer.css"; // Also Custom CSS
 
 // NOTE: Admin template styles are loaded in AdminLayout via <link href="/css/admin.css" />
 // to prevent global CSS from merging into GuestLayout.

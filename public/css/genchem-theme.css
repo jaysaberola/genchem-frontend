@@ -4,6 +4,7 @@
   --genchem-font: "Cooper", sans-serif;
   --genchem-red: #9b2d1f;
   --genchem-red-bright: #f60000;
+  --genchem-nav-highlight: #BE1A1A;
 }
 
 .genchemph,
@@ -13,21 +14,66 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Single page scroll — beat main.css height:100% + flex min-vh trap */
+html,
+body {
+  height: auto;
+  min-height: 100%;
+  overflow-x: clip;
+}
+
+.genchemph.stretched {
+  display: block;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+.genchemph #wrapper.about-us-page,
+.genchemph #wrapper.genchem-public-shell,
+.genchemph #wrapper.about-us-page main#content,
+.genchemph #wrapper.genchem-public-shell main#content,
+.genchemph main#content {
+  display: block;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  width: 100%;
+  max-width: 100%;
+  float: none;
+  clear: both;
+}
+
+.genchemph #wrapper.about-us-page > .cms-footer-content,
+.genchemph #wrapper.genchem-public-shell > .cms-footer-content {
+  width: 100%;
+  max-width: 100%;
+  clear: both;
+}
+
+/* Shared public page shell — same scroll/footer/content rules as About Us */
+.genchem-public-shell,
+.genchem-public-shell .cms-content,
+.genchem-public-shell .public-page-content {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 .genchem-hero-shell {
   position: relative;
   overflow: visible;
 }
 
 .genchem-hero-shell--overlay {
-  min-height: 420px;
+  min-height: 100vh;
+  z-index: 0;
+}
+
+.genchem-hero-shell--subpage {
+  min-height: 100vh;
 }
 
 .genchem-main-with-header-offset {
   padding-top: 96px;
-}
-
-.genchem-main-with-floating-logo {
-  padding-top: 88px;
 }
 
 .genchemph main.flex-grow-1 {
@@ -46,7 +92,7 @@
 .genchemph #header {
   --cnvs-header-height: 60px;
   position: relative;
-  z-index: 299;
+  z-index: 999;
   background: transparent;
   border-bottom: 0;
 }
@@ -56,11 +102,20 @@
   top: 15px;
   left: 0;
   right: 0;
-  z-index: 299;
+  z-index: 999;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
   pointer-events: none;
+  transition: top 0.25s ease, box-shadow 0.25s ease;
+}
+
+.genchemph #header.sticky-header #header-wrap {
+  top: 10px;
+}
+
+.genchemph #header.sticky-header.transparent-header.floating-header .container {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
 }
 
 .genchemph #header.genchem-header-static #header-wrap {
@@ -80,19 +135,70 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.14);
 }
 
-.genchemph #header .header-row {
+.genchemph #header .header-row,
+.genchemph .genchem-header-row {
   position: relative;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   min-height: var(--cnvs-header-height);
+  gap: 0.25rem;
 }
 
-.genchemph #logo {
-  position: relative;
+@media (min-width: 992px) {
+  .genchemph .genchem-header-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.25rem 1.25rem;
+  }
+
+  .genchemph #logo {
+    flex: 0 0 auto;
+    justify-self: unset;
+  }
+
+  .genchemph .genchem-header-nav {
+    flex: 0 1 auto;
+    order: unset;
+    justify-self: unset;
+    margin: 0 !important;
+  }
+
+  .genchemph .genchem-header-right {
+    flex: 0 0 auto;
+    order: unset;
+    justify-self: unset;
+    margin-left: auto !important;
+  }
+}
+
+.genchemph .genchem-header-right {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.genchemph .primary-menu {
+  flex: 0 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.genchemph .genchem-header-nav .menu-container {
+  justify-content: flex-start;
+}
+
+.genchemph .header-misc {
+  order: unset;
+  margin-left: 0;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .genchemph #logo.gemchem-logo a {
@@ -102,7 +208,8 @@
 
 .genchemph #logo.gemchem-logo img,
 .genchemph .genchem-brand-logo,
-.floating-logo__img {
+.floating-logo__img,
+.floating-logo img {
   display: block;
   object-fit: contain;
   background: transparent;
@@ -121,22 +228,89 @@
   transform: rotate(360deg);
 }
 
-.genchemph .primary-menu {
-  flex: 0 0 auto;
+.genchemph #logo {
+  position: relative;
   display: flex;
   align-items: center;
-}
-
-.genchemph .header-misc {
-  order: 6;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
+  flex-shrink: 0;
 }
 
 .genchemph .primary-menu-trigger {
   display: none;
   flex-shrink: 0;
+  align-items: center;
+}
+
+.genchemph .cnvs-hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--genchem-nav-highlight);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.genchemph .cnvs-hamburger:hover,
+.genchemph .primary-menu-trigger-active .cnvs-hamburger {
+  background: transparent;
+}
+
+.genchemph .cnvs-hamburger-box {
+  width: 22px;
+  height: 16px;
+  position: relative;
+  display: inline-block;
+}
+
+.genchemph .cnvs-hamburger-inner,
+.genchemph .cnvs-hamburger-inner::before,
+.genchemph .cnvs-hamburger-inner::after {
+  position: absolute;
+  left: 0;
+  width: 22px;
+  height: 2.5px;
+  background-color: var(--genchem-nav-highlight);
+  border-radius: 999px;
+  transition: transform 0.22s ease, opacity 0.22s ease, top 0.22s ease, bottom 0.22s ease;
+}
+
+.genchemph .cnvs-hamburger-inner {
+  top: 50%;
+  margin-top: -1.25px;
+}
+
+.genchemph .cnvs-hamburger-inner::before,
+.genchemph .cnvs-hamburger-inner::after {
+  content: "";
+}
+
+.genchemph .cnvs-hamburger-inner::before {
+  top: -7px;
+}
+
+.genchemph .cnvs-hamburger-inner::after {
+  bottom: -7px;
+}
+
+.genchemph .primary-menu-trigger-active .cnvs-hamburger-inner {
+  transform: rotate(45deg);
+}
+
+.genchemph .primary-menu-trigger-active .cnvs-hamburger-inner::before {
+  top: 0;
+  opacity: 0;
+}
+
+.genchemph .primary-menu-trigger-active .cnvs-hamburger-inner::after {
+  bottom: 0;
+  transform: rotate(-90deg);
 }
 
 .genchemph .primary-menu .menu-container {
@@ -151,6 +325,10 @@
 .genchemph .primary-menu .menu-item {
   position: relative;
   list-style: none;
+}
+
+.genchemph .primary-menu {
+  --cnvs-primary-menu-submenu-hover-font-weight: 400;
 }
 
 .genchemph .primary-menu .menu-link {
@@ -170,14 +348,22 @@
   display: block;
 }
 
-.genchemph .primary-menu .menu-item.current > .menu-link,
-.genchemph .primary-menu .menu-link.active {
-  color: var(--genchem-red) !important;
-  font-weight: 600;
+.genchemph .primary-menu .menu-container > .menu-item:hover > .menu-link,
+.genchemph .primary-menu .menu-container > .menu-item > .menu-link:hover {
+  color: var(--genchem-nav-highlight) !important;
+  font-weight: 400 !important;
 }
 
-.genchemph .primary-menu .menu-link:hover {
-  color: var(--genchem-red) !important;
+.genchemph .primary-menu .menu-item.current > .menu-link,
+.genchemph .primary-menu .menu-link.active {
+  color: var(--genchem-nav-highlight) !important;
+  font-weight: 400 !important;
+}
+
+.genchemph .primary-menu .menu-container > .menu-item > .menu-link:active,
+.genchemph .primary-menu .sub-menu-container .menu-link:active {
+  color: var(--genchem-nav-highlight) !important;
+  font-weight: 400 !important;
 }
 
 .genchemph .primary-menu.with-arrows .menu-item:has(> .sub-menu-container) > .menu-link div::after {
@@ -192,22 +378,22 @@
   border-top: 5px solid currentColor;
 }
 
-.genchemph .primary-menu .sub-menu-container {
+.genchemph .primary-menu .menu-container > .menu-item > .sub-menu-container {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 4px);
   left: 0;
-  min-width: 220px;
+  min-width: 210px;
   list-style: none;
   margin: 0;
-  padding: 8px 0;
+  padding: 10px 0;
   background: #ffffff;
   border: 0;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(8px);
-  transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
   z-index: 400;
 }
 
@@ -218,20 +404,26 @@
 }
 
 .genchemph .primary-menu .sub-menu-container .menu-link {
-  color: #333333 !important;
-  padding: 10px 18px !important;
-  font-size: 0.95rem;
+  color: #4a4a4a !important;
+  padding: 11px 22px !important;
+  font-size: 1.05rem;
+  font-weight: 400 !important;
+  background: transparent !important;
+  transition: color 0.2s ease;
+}
+
+.genchemph .primary-menu .sub-menu-container > .menu-item:hover > .menu-link,
+.genchemph .primary-menu .sub-menu-container .menu-link:hover,
+.genchemph .primary-menu .sub-menu-container .menu-link:focus-visible {
+  color: var(--genchem-nav-highlight) !important;
+  font-weight: 400 !important;
+  background: transparent !important;
 }
 
 .genchemph .primary-menu .sub-menu-container .menu-link.active,
 .genchemph .primary-menu .sub-menu-container .menu-item.current > .menu-link {
-  color: #9b2d1f !important;
-  font-weight: 600;
-}
-
-.genchemph .primary-menu .sub-menu-container .menu-link:hover {
-  color: #9b2d1f !important;
-  background: rgba(155, 45, 31, 0.08);
+  color: var(--genchem-nav-highlight) !important;
+  font-weight: 400 !important;
 }
 
 .genchemph #top-call {
@@ -260,7 +452,7 @@
 }
 
 .genchemph #top-call .genchem-header-phone:hover {
-  color: var(--genchem-red);
+  color: var(--genchem-nav-highlight);
 }
 
 .genchemph #top-call .calling-icon {
@@ -283,6 +475,8 @@
   color: #ffffff !important;
   border: 2px solid transparent !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+  font-weight: 300 !important;
+  line-height: 1.25 !important;
 }
 
 .genchemph .genchem-hero-cta:hover,
@@ -297,76 +491,13 @@
   box-shadow: none !important;
 }
 
-.genchemph .cnvs-hamburger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  padding: 0;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 8px;
-  background: transparent;
-  cursor: pointer;
-}
-
-.cnvs-hamburger-box {
-  width: 18px;
-  height: 14px;
-  position: relative;
-  display: inline-block;
-}
-
-.cnvs-hamburger-inner,
-.cnvs-hamburger-inner::before,
-.cnvs-hamburger-inner::after {
-  position: absolute;
-  width: 18px;
-  height: 2px;
-  background-color: #333333;
-  border-radius: 999px;
-  transition: transform 0.2s ease;
-}
-
-.cnvs-hamburger-inner {
-  top: 50%;
-  margin-top: -1px;
-}
-
-.cnvs-hamburger-inner::before,
-.cnvs-hamburger-inner::after {
-  content: "";
-  left: 0;
-}
-
-.cnvs-hamburger-inner::before {
-  top: -6px;
-}
-
-.cnvs-hamburger-inner::after {
-  bottom: -6px;
-}
-
-.genchemph .primary-menu-trigger-active .cnvs-hamburger-inner {
-  transform: rotate(45deg);
-}
-
-.genchemph .primary-menu-trigger-active .cnvs-hamburger-inner::before {
-  top: 0;
-  opacity: 0;
-}
-
-.genchemph .primary-menu-trigger-active .cnvs-hamburger-inner::after {
-  bottom: 0;
-  transform: rotate(-90deg);
-}
-
 /* Page hero sits under floating header */
 .genchem-page-banner {
   position: relative;
-  min-height: 420px;
+  min-height: 100vh;
   overflow: hidden;
   margin-top: 0;
+  background: #e9ecef;
 }
 
 .genchem-page-banner__slide {
@@ -378,10 +509,7 @@
 }
 
 .genchem-page-banner__overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 1;
+  display: none;
 }
 
 .public-page-content {
@@ -392,12 +520,26 @@
   margin-top: 0;
 }
 
+.genchemph .genchem-mobile-menu-backdrop {
+  display: none;
+}
+
 @media (max-width: 991px) {
   .genchemph #header #header-wrap {
     top: 10px;
   }
 
-  .genchemph #header .header-row {
+  .genchemph #header.transparent-header.floating-header .container {
+    border-radius: 16px;
+    max-width: calc(100% - 16px);
+    padding: 0 12px 0 16px;
+  }
+
+  .genchemph #header .header-row,
+  .genchemph .genchem-header-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
     min-height: 64px;
   }
 
@@ -406,55 +548,89 @@
     height: 48px;
   }
 
+  .genchemph .genchem-header-right {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
   .genchemph .primary-menu-trigger {
     display: flex;
-    margin-left: auto;
-    order: 5;
+    margin-left: 0;
   }
 
   .genchemph .header-misc {
     display: none !important;
   }
 
-  .genchemph .primary-menu {
-    display: none;
-    order: 10;
-    flex: 1 1 100%;
+  .genchemph .genchem-mobile-menu-backdrop {
+    display: block;
     position: fixed;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 997;
+    cursor: pointer;
+  }
+
+  .genchemph nav.genchem-header-nav.primary-menu {
+    display: none;
+    position: fixed !important;
     left: 12px;
     right: 12px;
     top: 78px;
     margin: 0;
-    padding: 0;
+    padding: 8px 0;
     background: #ffffff;
     border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    max-height: calc(100vh - 90px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    max-height: calc(100vh - 96px);
     overflow-y: auto;
-    z-index: 298;
+    z-index: 998;
+    flex: none;
+    order: unset;
   }
 
-  body.primary-menu-open .genchemph .primary-menu {
-    display: block;
+  body.primary-menu-open .genchemph nav.genchem-header-nav.primary-menu {
+    display: block !important;
   }
 
-  .genchemph .primary-menu .menu-container {
+  .genchemph .genchem-header-nav .menu-container {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
   }
 
-  .genchemph .primary-menu .menu-link {
+  .genchemph .genchem-header-nav .menu-link {
     color: #333333 !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     font-size: 1.05rem;
+    font-weight: 400 !important;
+    transition: color 0.2s ease;
   }
 
-  .genchemph .primary-menu .menu-item.current > .menu-link {
-    color: var(--genchem-red) !important;
+  .genchemph .genchem-header-nav .menu-container > .menu-item:last-child > .menu-link {
+    border-bottom: 0;
   }
 
-  .genchemph .primary-menu .sub-menu-container {
+  .genchemph .genchem-header-nav .menu-container > .menu-item:hover > .menu-link,
+  .genchemph .genchem-header-nav .menu-container > .menu-item > .menu-link:hover,
+  .genchemph .genchem-header-nav .menu-container > .menu-item > .menu-link:active,
+  .genchemph .genchem-header-nav .sub-menu-container > .menu-item:hover > .menu-link,
+  .genchemph .genchem-header-nav .sub-menu-container .menu-link:hover,
+  .genchemph .genchem-header-nav .sub-menu-container .menu-link:active {
+    color: var(--genchem-nav-highlight) !important;
+    font-weight: 400 !important;
+  }
+
+  .genchemph .genchem-header-nav .menu-item.current > .menu-link,
+  .genchemph .genchem-header-nav .menu-link.active {
+    color: var(--genchem-nav-highlight) !important;
+    font-weight: 400 !important;
+  }
+
+  .genchemph .genchem-header-nav .sub-menu-container {
     position: static;
     opacity: 1;
     visibility: visible;
@@ -463,30 +639,51 @@
     box-shadow: none;
     background: rgba(0, 0, 0, 0.03);
     border-radius: 0;
+    padding: 0;
+    margin: 0;
   }
 
-  .genchemph .primary-menu .menu-item.open > .sub-menu-container {
+  .genchemph .genchem-header-nav .menu-item.open > .sub-menu-container {
     display: block;
   }
 
-  .genchemph .primary-menu .sub-menu-container .menu-link {
+  .genchemph .genchem-header-nav .sub-menu-container .menu-link {
     padding-left: 32px !important;
     color: #555555 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .genchemph .genchem-header-nav .sub-menu-container .menu-link.active {
+    color: var(--genchem-nav-highlight) !important;
   }
 }
 
 /* ---- GenChem page theme styles ---- */
-.about-us-low::before {
+.about-us-low[style*="background-image"]::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.68);
 }
 
-.about-us-high {
+.about-us-page .about-us-low:not([style*="background-image"]):not(.home-intro-hero):not(#iz2p)::before {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+.about-us-low[style*="background-image"] .about-us-high,
+.home-intro-hero .about-us-high,
+#iz2p .about-us-high {
   position: relative;
   z-index: 2;
   color: white;
+}
+
+.about-us-page .about-us-high {
+  position: relative;
+  z-index: 2;
+  color: inherit;
 }
 
 .genchemph .nav-tabs .nav-link .text-uppercase {
@@ -561,9 +758,22 @@
 
 .cms-content .button.button-light:hover,
 .cms-content .button.button-light:focus,
+.cms-content .button.button-light:focus-visible,
 .public-page-content .button.button-light:hover,
-.public-page-content .button.button-light:focus {
-  background-color: #212529;
+.public-page-content .button.button-light:focus,
+.public-page-content .button.button-light:focus-visible {
+  background-color: #9b2d1f !important;
+  color: #ffffff !important;
+}
+
+.cms-content .button.button-light:hover.text-dark,
+.cms-content .button.button-light:focus.text-dark,
+.public-page-content .button.button-light:hover.text-dark,
+.public-page-content .button.button-light:focus.text-dark,
+.cms-content .button.bg-white:hover,
+.cms-content .button.bg-white:focus,
+.public-page-content .button.bg-white:hover,
+.public-page-content .button.bg-white:focus {
   color: #ffffff !important;
 }
 
@@ -582,8 +792,20 @@
 .public-page-content .bg-dark-red p,
 .public-page-content .bg-dark-red h1,
 .public-page-content .bg-dark-red h2,
-.public-page-content .bg-dark-red h3 {
+.public-page-content .bg-dark-red h3,
+.cms-footer-content .bg-dark-red .text-white,
+.cms-footer-content .bg-dark-red p,
+.cms-footer-content .bg-dark-red h1,
+.cms-footer-content .bg-dark-red h2,
+.cms-footer-content .bg-dark-red h3,
+.cms-footer-content .bg-dark-red h4 {
   color: #ffffff !important;
+}
+
+.genchemph #demo-drone-tab .nav-link {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
 }
 
 .genchemph #demo-drone-tab .nav-link h3 {
@@ -625,22 +847,53 @@
   transition: ease 0.4s all;
 }
 
-/* Logo centered on the seam between banner and content */
-.floating-logo {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transform: translateY(50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Trust bar (home page) sits directly above the CMS footer */
+.public-page-content .footer-stick.dark,
+.cms-content .footer-stick.dark {
+  background-color: #212529 !important;
+  color: #ffffff !important;
   width: 100%;
-  z-index: 15;
-  pointer-events: none;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
-.floating-logo__mark {
+.public-page-content .footer-stick.dark span,
+.cms-content .footer-stick.dark span,
+.public-page-content .footer-stick.dark i,
+.cms-content .footer-stick.dark i {
+  color: #ffffff !important;
+}
+
+/* Seam bar + logo floating on top of banner (all pages) */
+.floating-logo {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 80px;
+  background-color: #ffffff;
+  z-index: 50;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.floating-logo__inner {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 80px;
+  overflow: visible;
+}
+
+.floating-logo__mark,
+.floating-logo .position-absolute {
+  position: absolute;
+  z-index: 51;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -648,28 +901,107 @@
   background: transparent;
 }
 
-.floating-logo__img {
-  width: clamp(220px, 32vw, 300px);
-  height: auto;
-  max-height: 168px;
-  mix-blend-mode: screen;
+.floating-logo--home .floating-logo__mark,
+.floating-logo--home .position-absolute,
+.floating-logo:not(.floating-logo--subpage) .position-absolute {
+  top: -23px;
 }
 
-.about-us-page .floating-logo__img {
-  width: clamp(240px, 34vw, 320px);
-  max-height: 180px;
+.floating-logo--subpage .floating-logo__mark {
+  top: -122px;
+}
+
+.floating-logo__img,
+.floating-logo img {
+  display: block;
+  width: auto;
+  max-width: 250px;
+  height: auto;
+  object-fit: contain;
+  background: transparent !important;
 }
 
 .about-us-page .about-us-low {
   position: relative;
 }
 
-.about-us-page .text-dark {
+.about-us-page .width-img-control .about-us-high .text-dark,
+.about-us-page .width-img-control .text-dark {
   color: #333333 !important;
 }
 
-.about-us-page .about-us-high .text-dark,
-.about-us-page .about-us-high p,
-.about-us-page .about-us-high li {
-  color: #333333 !important;
+/* ----------------------------------------------------------------
+   Go To Top — genchemph #gotoTop (rounded red circle, bottom-right)
+----------------------------------------------------------------- */
+#gotoTop,
+.genchem-goto-top {
+  --cnvs-gotoTop-size: 2rem;
+  --cnvs-gotoTop-bg: #9b2d1f;
+  --cnvs-gotoTop-hover-color: #f60000;
+  --cnvs-gotoTop-icon-color: #ffffff;
+  --cnvs-gotoTop-position-boxed-right: 30px;
+  --cnvs-gotoTop-position-boxed-bottom: 50px;
+
+  position: fixed;
+  top: auto;
+  left: auto;
+  right: var(--cnvs-gotoTop-position-boxed-right);
+  bottom: var(--cnvs-gotoTop-position-boxed-bottom);
+  z-index: -999;
+  width: var(--cnvs-gotoTop-size);
+  height: var(--cnvs-gotoTop-size);
+  padding: 0;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cnvs-gotoTop-bg);
+  color: var(--cnvs-gotoTop-icon-color);
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: background-color 0.2s linear, opacity 0.4s ease, transform 0.2s ease;
+}
+
+.genchem-goto-top__icon {
+  width: 1rem;
+  height: 1rem;
+  display: block;
+}
+
+.gototop-active #gotoTop,
+body.gototop-active .genchem-goto-top {
+  z-index: 599;
+  opacity: 1;
+}
+
+.genchemph.stretched #gotoTop,
+.genchemph.stretched .genchem-goto-top {
+  right: var(--cnvs-gotoTop-position-boxed-right);
+  bottom: var(--cnvs-gotoTop-position-boxed-bottom);
+}
+
+#gotoTop:hover,
+#gotoTop:focus-visible,
+.genchem-goto-top:hover,
+.genchem-goto-top:focus-visible {
+  background-color: var(--cnvs-gotoTop-hover-color);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 767px) {
+  #gotoTop,
+  .genchem-goto-top {
+    --cnvs-gotoTop-position-boxed-right: 20px;
+    --cnvs-gotoTop-position-boxed-bottom: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #gotoTop,
+  .genchem-goto-top {
+    transition: none;
+  }
 }

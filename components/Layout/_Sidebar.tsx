@@ -103,14 +103,6 @@ export default function Sidebar({ isOpen, isMobile, onClose, width }: SidebarPro
       ]
     },
     {
-      label: <MenuLabel icon="fa-solid fa-newspaper" text="Testimonials" />,
-      href: "/testimonials",
-      children: [
-        { label: "Manage Testimonials", href: "/testimonials" },
-        { label: "Create Testimonail", href: "/testimonials/create" },
-      ]
-    },
-    {
       label: <MenuLabel icon="fa-solid fa-gear" text="Settings" />,
       href: "/settings",
       children: [
@@ -133,16 +125,6 @@ export default function Sidebar({ isOpen, isMobile, onClose, width }: SidebarPro
       children: [
         { label: "Roles", href: "/account-management/roles" },
         { label: "Access Rights", href: "/account-management/access_rights" },
-      ]
-    }
-    ,
-    {
-      label: <MenuLabel icon="fa-solid fa-boxes-stacked" text="Products" />,
-      href: "/products",
-      children: [
-        { label: "Manage Products", href: "/products" },
-        { label: "Create Product", href: "/products/create" },
-        { label: "Create Brand", href: "/products/category_create" }
       ]
     }
   ];

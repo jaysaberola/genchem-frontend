@@ -13,7 +13,7 @@ export default function Banner({
   subtitle,
   album,
 }: BannerProps) {
-  if (!album?.banners?.length || title === "News" || title === "Products") {
+  if (!album?.banners?.length || title === "News") {
     return null;
   }
 

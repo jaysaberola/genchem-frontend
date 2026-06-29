@@ -15,7 +15,11 @@ const axiosInstance: AxiosInstance = axios.create({
  * 🔐 Attach Bearer token to every request
  */
 axiosInstance.interceptors.request.use((config) => {
-  if (!config.headers?.["X-No-Loading"]) {
+  const skipLoading =
+    config.headers?.["X-No-Loading"] ||
+    (typeof window !== "undefined" && window.location.pathname.startsWith("/public"));
+
+  if (!skipLoading) {
     loading.start();
   }
 

@@ -184,7 +184,7 @@ export default function MainBanner({ album }: MainBannerProps) {
       ? ({
           ...(buttonFont ? { fontFamily: buttonFont } : {}),
           ...(typeof buttonFontSize === "number" && Number.isFinite(buttonFontSize)
-            ? { fontSize: Math.max(10, Math.min(120, buttonFontSize)) }
+            ? { fontSize: Math.max(10, Math.min(20, buttonFontSize)) }
             : {}),
           ...(typeof buttonBold === "boolean" ? { fontWeight: buttonBold ? 800 : 400 } : {}),
         } as const)

@@ -150,6 +150,32 @@ export default function LandingTopbar({ overlayHero = true }: { overlayHero?: bo
 
 
 
+  useEffect(() => {
+
+    const header = document.getElementById("header");
+
+    if (!header) return;
+
+
+
+    const onScroll = () => {
+
+      header.classList.toggle("sticky-header", window.scrollY > 10);
+
+    };
+
+
+
+    onScroll();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", onScroll);
+
+  }, []);
+
+
+
   const closeMobileMenu = () => setMobileOpen(false);
 
 
@@ -174,15 +200,26 @@ export default function LandingTopbar({ overlayHero = true }: { overlayHero?: bo
 
       data-sticky-shrink="false"
 
+      data-mobile-sticky="true"
+
     >
 
       <div id="header-wrap">
 
+        {mobileOpen ? (
+          <button
+            type="button"
+            className="genchem-mobile-menu-backdrop"
+            aria-label="Close menu"
+            onClick={closeMobileMenu}
+          />
+        ) : null}
+
         <div className="container">
 
-          <div className="header-row">
+          <div className="header-row genchem-header-row">
 
-            <div id="logo" className="me-lg-4 gemchem-logo">
+            <div id="logo" className="me-lg-2 gemchem-logo">
 
               <Link href="/public/home">
 
@@ -204,94 +241,52 @@ export default function LandingTopbar({ overlayHero = true }: { overlayHero?: bo
 
 
 
-            <div className="header-misc ms-auto">
-
-              <div id="top-call" className="header-misc-icon d-flex flex-row align-items-center gap-2">
-
-                <img
-
-                  className="py-2 calling-icon"
-
-                  src="/images/icons/call_red.png"
-
-                  alt=""
-
-                  aria-hidden="true"
-
-                />
-
-                <div className="genchem-header-phones fs-6 mb-0 d-flex flex-column">
-
-                  <a href={`tel:${telNo.replace(/[^\d+]/g, "")}`} className="genchem-header-phone">
-
-                    {telNo}
-
-                  </a>
-
-                  <a href={`tel:${mobileNo.replace(/[^\d+]/g, "")}`} className="genchem-header-phone">
-
-                    {mobileNo}
-
-                  </a>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            <div className={`primary-menu-trigger ${mobileOpen ? "primary-menu-trigger-active" : ""}`}>
-
-              <button
-
-                className="cnvs-hamburger"
-
-                type="button"
-
-                title="Open Mobile Menu"
-
-                aria-label={mobileOpen ? "Close menu" : "Open menu"}
-
-                aria-expanded={mobileOpen}
-
-                onClick={() => setMobileOpen((v) => !v)}
-
-              >
-
-                <span className="cnvs-hamburger-box">
-
-                  <span className="cnvs-hamburger-inner" />
-
-                </span>
-
-              </button>
-
-            </div>
-
-
-
-            <nav className="primary-menu with-arrows">
-
+            <nav className="primary-menu with-arrows genchem-header-nav">
               <ul className="menu-container">
-
                 <Menu isMobile={mobileOpen} onNavigate={closeMobileMenu} />
-
               </ul>
-
             </nav>
 
+            <div className="genchem-header-right">
+            <div className="header-misc">
+              <div id="top-call" className="header-misc-icon d-flex flex-row align-items-center gap-2">
+                <img
+                  className="py-2 calling-icon"
+                  src="/images/genchemph/icons/call_red.png"
+                  alt=""
+                  aria-hidden="true"
+                />
+                <div className="genchem-header-phones fs-6 mb-0 d-flex flex-column">
+                  <a href={`tel:${telNo.replace(/[^\d+]/g, "")}`} className="genchem-header-phone">
+                    {telNo}
+                  </a>
+                  <a href={`tel:${mobileNo.replace(/[^\d+]/g, "")}`} className="genchem-header-phone">
+                    {mobileNo}
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className={`primary-menu-trigger ${mobileOpen ? "primary-menu-trigger-active" : ""}`}>
+              <button
+                className="cnvs-hamburger"
+                type="button"
+                title="Open Mobile Menu"
+                aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileOpen}
+                onClick={() => setMobileOpen((v) => !v)}
+              >
+                <span className="cnvs-hamburger-box">
+                  <span className="cnvs-hamburger-inner" />
+                </span>
+              </button>
+            </div>
+            </div>
           </div>
-
         </div>
-
       </div>
-
     </header>
-
   );
-
 }
 
 

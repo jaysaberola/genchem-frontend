@@ -2,18 +2,24 @@ import React, { useEffect } from "react";
 import Head from "next/head";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
-import { initGenchemProductTabs } from "@/lib/genchemTabs";
+import { registerGenchemTabs } from "@/lib/genchemTabs";
+import { initGenchemVideos } from "@/lib/genchemMedia";
 import { resolvePagePresentation } from "@/lib/cmsPageContent";
 
 export const BANNER_TITLE = "GENCHEM PH";
 
 export async function getServerSideProps() {
     try {
-        const pageRes = await getPublicPageBySlug("home");
+        const [pageRes, footerRes] = await Promise.all([
+            getPublicPageBySlug("home"),
+            getPublicPageBySlug("footer"),
+        ]);
 
         return {
             props: {
                 pageData: pageRes.data ?? null,
+                footerData: footerRes.data ?? null,
+                layout: { fullWidth: true },
             },
         };
     } catch (error) {
@@ -35,7 +41,9 @@ export default function Home({ pageData }: LandingPageLayoutProps) {
         : { htmlContent: "", css: "" };
 
     useEffect(() => {
-        initGenchemProductTabs();
+        const cleanup = registerGenchemTabs();
+        initGenchemVideos();
+        return cleanup;
     }, [htmlContent]);
 
     return (
@@ -43,8 +51,13 @@ export default function Home({ pageData }: LandingPageLayoutProps) {
             {css ? (
                 <Head>
                     <style id="cms-home-styles" dangerouslySetInnerHTML={{ __html: css }} />
+                    <link rel="stylesheet" href="/css/genchemph-home-intro.css?v=3" />
                 </Head>
-            ) : null}
+            ) : (
+                <Head>
+                    <link rel="stylesheet" href="/css/genchemph-home-intro.css?v=3" />
+                </Head>
+            )}
 
             <div>
                 <div className="w-100 base-content">
