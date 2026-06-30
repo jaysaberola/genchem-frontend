@@ -1,70 +1,61 @@
-const TRUST_SHIELD_ICON_HTML =
-  '<i class="me-3 fs-4 fa-solid fa-shield-halved" aria-hidden="true"></i>';
+const TRUST_BAR_ROW_HTML = `
+						<div class="row gy-4">
+							<div class="col-lg-4 d-flex align-items-center">
+								<i class="me-3 fs-4 fa-solid fa-ranking-star" aria-hidden="true"></i>
+								<span>Trusted Since 1976</span>
+							</div>
+							<div class="col-lg-4 d-flex align-items-center justify-content-lg-center">
+								<i class="me-3 fs-4 fa-solid fa-shield-halved" aria-hidden="true"></i>
+								<span>Quality Assured Products</span>
+							</div>
+							<div class="col-lg-4 d-flex align-items-center justify-content-lg-end">
+								<i class="me-3 fs-4 fa-solid fa-headset" aria-hidden="true"></i>
+								<span>24hr Technical Support</span>
+							</div>
+						</div>`;
 
-const SHIELD_ICON_CLASS = "me-3 fs-4 fa-solid fa-shield-halved";
-
-function columnHasShieldIcon(columnHtml: string): boolean {
-  return /fa-shield-halved|fa-shield\b|fa-award|fa-certificate/i.test(columnHtml);
-}
-
-function columnHasAnyIcon(columnHtml: string): boolean {
-  return /<i\b/i.test(columnHtml);
-}
-
-/** Trust bar — Font Awesome shield for middle item (matches left/right icons). */
+/** Icons match genchemph reference (FA equivalents for Bootstrap Icons). */
 export function patchHomeTrustBar(html: string): string {
-  if (!html.includes("Quality Assured Products")) return html;
+  if (!html.includes("footer-stick") || !html.includes("Trusted Since 1976")) {
+    return html;
+  }
 
-  let output = html;
-
-  output = output.replace(/<i\b[^>]*\bbi-shield[^>]*>\s*<\/i>/gi, TRUST_SHIELD_ICON_HTML);
-
-  output = output.replace(
-    /(<div\b[^>]*>)(\s*)<i\b[^>]*>\s*<\/i>(\s*<span[^>]*>\s*Quality Assured Products\s*<\/span>)/gi,
-    `$1$2${TRUST_SHIELD_ICON_HTML}$3`,
+  return html.replace(
+    /(<div\b[^>]*\bfooter-stick\b[^>]*>\s*<div class="container">)\s*<div class="row gy-4">[\s\S]*?<\/div>(\s*<\/div>\s*<\/div>)/i,
+    `$1${TRUST_BAR_ROW_HTML}$2`,
   );
-
-  output = output.replace(
-    /(<div\b[^>]*\bcol-(?:lg|md)-4\b[^>]*>)([\s\S]*?)(<span[^>]*>\s*Quality Assured Products\s*<\/span>)/gi,
-    (match, open, middle, span) => {
-      if (columnHasShieldIcon(match)) return match;
-      if (columnHasAnyIcon(middle)) {
-        return `${open}${middle.replace(/<i\b[^>]*>\s*<\/i>/i, TRUST_SHIELD_ICON_HTML)}${span}`;
-      }
-      return `${open}${middle}${TRUST_SHIELD_ICON_HTML}${span}`;
-    },
-  );
-
-  return output;
 }
 
 export function initGenchemTrustBar(): () => void {
   if (typeof document === "undefined") return () => {};
 
-  document.querySelectorAll(".footer-stick.dark").forEach((bar) => {
-    bar.querySelectorAll<HTMLElement>('[class*="col-lg-4"], [class*="col-md-4"]').forEach((col) => {
-      if (!col.textContent?.includes("Quality Assured Products")) return;
+  const trustBar = document.querySelector(".footer-stick.dark .row.gy-4");
+  if (!trustBar) return () => {};
 
-      const existing = col.querySelector<HTMLElement>("i");
-      if (existing) {
-        if (!/fa-shield|fa-award|fa-certificate/i.test(existing.className)) {
-          existing.className = SHIELD_ICON_CLASS;
-          existing.setAttribute("aria-hidden", "true");
-        }
-        return;
-      }
+  trustBar.querySelectorAll("img").forEach((img) => img.remove());
 
-      const icon = document.createElement("i");
-      icon.className = SHIELD_ICON_CLASS;
-      icon.setAttribute("aria-hidden", "true");
+  const expected = [
+    { label: "Trusted Since 1976", iconClass: "me-3 fs-4 fa-solid fa-ranking-star" },
+    { label: "Quality Assured Products", iconClass: "me-3 fs-4 fa-solid fa-shield-halved" },
+    { label: "24hr Technical Support", iconClass: "me-3 fs-4 fa-solid fa-headset" },
+  ] as const;
 
-      const label = col.querySelector("span");
-      if (label) {
-        col.insertBefore(icon, label);
-      } else {
-        col.prepend(icon);
-      }
-    });
+  trustBar.querySelectorAll<HTMLElement>(".col-lg-4").forEach((col, index) => {
+    const item = expected[index];
+    if (!item) return;
+
+    col.querySelectorAll("img").forEach((img) => img.remove());
+
+    let icon = col.querySelector<HTMLElement>("i");
+    if (!icon) {
+      icon = document.createElement("i");
+      const labelEl = col.querySelector("span");
+      if (labelEl) col.insertBefore(icon, labelEl);
+      else col.prepend(icon);
+    }
+
+    icon.className = item.iconClass;
+    icon.setAttribute("aria-hidden", "true");
   });
 
   return () => {};

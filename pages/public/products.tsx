@@ -85,8 +85,6 @@ export default function ProductsPage({ pageData }: ProductsPageProps) {
         {css ? (
           <style id="cms-products-styles" dangerouslySetInnerHTML={{ __html: css }} />
         ) : null}
-        {/* Load after CMS inline styles so product bag hover/layout rules win */}
-        <link rel="stylesheet" href="/css/genchemph-products.css?v=10" />
       </Head>
 
       <div className="w-100 base-content genchem-products-page">

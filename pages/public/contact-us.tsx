@@ -40,7 +40,6 @@ export default function ContactUsPage({ pageData }: ContactUsPageProps) {
         {css ? (
           <style id="cms-contact-us-styles" dangerouslySetInnerHTML={{ __html: css }} />
         ) : null}
-        <link rel="stylesheet" href="/css/genchemph-contact-us.css?v=2" />
       </Head>
 
       <div className="w-100 base-content genchem-contact-us-page public-contact">

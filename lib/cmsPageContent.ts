@@ -168,7 +168,7 @@ export function patchFooterHtml(html: string): string {
   let output = html;
 
   // Fix corrupted GrapesJS markup only — preserve user classes/styles on #copyrights
-  output = output.replace(/<div\s+id="copyrights"\s*="[^"]*"[^>]*>/gi, '<div id="copyrights" class="p-0">');
+  output = output.replace(/<div\s+id="copyrights"\s*="[^"]*"[^>]*>/gi, '<div id="copyrights" class="p-0 dark bg-dark">');
 
   output = output.replace(/<iframe\b([^>]*)>/gi, (tag, attrs: string) => {
     if (/max-width\s*:/i.test(attrs)) return tag;
@@ -312,6 +312,12 @@ export function rewriteCmsAssetUrls(html: string): string {
       .replace(/src="images\//g, `src="${apiBase}/theme/addons/images/`)
       .replace(/src='images\//g, `src='${apiBase}/theme/addons/images/`)
       .replace(/url\(['"]?images\//g, `url(${apiBase}/theme/addons/images/`);
+
+    // File-manager uploads saved with old backend host still work after deploy
+    output = output.replace(
+      /https?:\/\/[^"'()\s]+\/(?:public\/)?file-manager\//gi,
+      `${apiBase}/file-manager/`,
+    );
   }
 
   output = output

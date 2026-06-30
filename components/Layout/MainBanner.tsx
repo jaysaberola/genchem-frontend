@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PublicAlbum } from "@/services/publicPageService";
 import styles from "@/styles/mainbanner.module.css";
+import { resolveManagedAssetUrl } from "@/lib/mediaAssets";
 
 interface MainBannerProps {
   album: PublicAlbum;
@@ -201,16 +202,21 @@ export default function MainBanner({ album }: MainBannerProps) {
           transform: `translateX(-${current * (100 / banners.length)}%)`,
         }}
       >
-        {banners.map((banner, index) => (
+        {banners.map((banner, index) => {
+          const bgUrl =
+            resolveManagedAssetUrl(banner.image_url) || banner.image_url;
+
+          return (
           <div
             key={index}
             className={styles.slide}
             style={{
               width: `${100 / banners.length}%`,
-              backgroundImage: `url(${banner.image_url})`,
+              backgroundImage: bgUrl ? `url(${bgUrl})` : undefined,
             }}
           />
-        ))}
+        );
+        })}
       </div>
 
       {/* overlay */}

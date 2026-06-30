@@ -4,6 +4,7 @@ import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { registerGenchemTabs } from "@/lib/genchemTabs";
 import { initGenchemVideos } from "@/lib/genchemMedia";
+import { initGenchemTrustBar } from "@/lib/genchemTrustBar";
 import { resolvePagePresentation } from "@/lib/cmsPageContent";
 
 export const BANNER_TITLE = "GENCHEM PH";
@@ -43,7 +44,11 @@ export default function Home({ pageData }: LandingPageLayoutProps) {
     useEffect(() => {
         const cleanup = registerGenchemTabs();
         initGenchemVideos();
-        return cleanup;
+        const cleanupTrustBar = initGenchemTrustBar();
+        return () => {
+            cleanup();
+            cleanupTrustBar();
+        };
     }, [htmlContent]);
 
     return (
@@ -51,13 +56,8 @@ export default function Home({ pageData }: LandingPageLayoutProps) {
             {css ? (
                 <Head>
                     <style id="cms-home-styles" dangerouslySetInnerHTML={{ __html: css }} />
-                    <link rel="stylesheet" href="/css/genchemph-home-intro.css?v=3" />
                 </Head>
-            ) : (
-                <Head>
-                    <link rel="stylesheet" href="/css/genchemph-home-intro.css?v=3" />
-                </Head>
-            )}
+            ) : null}
 
             <div>
                 <div className="w-100 base-content">
