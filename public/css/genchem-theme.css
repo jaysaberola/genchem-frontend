@@ -505,7 +505,6 @@ body {
   inset: 0;
   background-size: cover;
   background-position: center;
-  transition: opacity 0.9s ease-in-out;
 }
 
 .genchem-page-banner__overlay {

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import Head from "next/head";
 
 import Banner from "./_Banner";
 import Header from "@/components/Layout/_Header";
@@ -67,6 +68,12 @@ export default function LandingPageLayout({
 
   return (
     <div className="genchemph stretched has-plugin-html5video">
+      <Head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css"
+        />
+      </Head>
       <Header overlayHero={overlayHero} />
 
       <div

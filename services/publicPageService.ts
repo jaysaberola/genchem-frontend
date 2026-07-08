@@ -25,7 +25,7 @@ export interface PublicAlbum {
   name: string;
   type?: string;
   banner_type?: string;
-  transition?: string;
+  transition?: number;
   transition_in?: string;
   transition_out?: string;
   banners: PublicBanner[];

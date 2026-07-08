@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { PublicAlbum } from "@/services/publicPageService";
 import styles from "@/styles/mainbanner.module.css";
 import { resolveManagedAssetUrl, toCssBackgroundImage } from "@/lib/mediaAssets";
+import { useBannerCarousel } from "@/lib/useBannerCarousel";
 
 interface MainBannerProps {
   album: PublicAlbum;
@@ -9,8 +10,15 @@ interface MainBannerProps {
 
 export default function MainBanner({ album }: MainBannerProps) {
   const banners = album.banners || [];
-  const [current, setCurrent] = useState(0);
   const [fontOverrides, setFontOverrides] = useState<Record<string, any>>({});
+
+  const { current, goTo, isSlideVisible, getSlideAnimationClass, getSlideZIndex } =
+    useBannerCarousel(
+      banners.length,
+      album.transition,
+      album.transition_in,
+      album.transition_out,
+    );
 
   useEffect(() => {
     try {
@@ -24,21 +32,6 @@ export default function MainBanner({ album }: MainBannerProps) {
       // ignore
     }
   }, []);
-
-  const interval =
-    typeof album.transition === "number"
-      ? album.transition * 1000
-      : 5000;
-
-  useEffect(() => {
-    if (!banners.length) return;
-
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % banners.length);
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [banners.length, interval]);
 
   if (!banners.length) return null;
 
@@ -194,14 +187,7 @@ export default function MainBanner({ album }: MainBannerProps) {
   return (
     <>
       <section className={styles.bannerSection}>
-      {/* 🖼 SLIDER STRIP */}
-      <div
-        className={styles.sliderStrip}
-        style={{
-          width: `${banners.length * 100}%`,
-          transform: `translateX(-${current * (100 / banners.length)}%)`,
-        }}
-      >
+      <div className={styles.slidesStack}>
         {banners.map((banner, index) => {
           const bgUrl =
             resolveManagedAssetUrl(banner.image_url) || banner.image_url;
@@ -210,11 +196,13 @@ export default function MainBanner({ album }: MainBannerProps) {
           return (
           <div
             key={index}
-            className={styles.slide}
+            className={`${styles.slide} ${getSlideAnimationClass(index)}`}
             style={{
-              width: `${100 / banners.length}%`,
               backgroundImage,
+              opacity: isSlideVisible(index) ? 1 : 0,
+              zIndex: getSlideZIndex(index),
             }}
+            aria-hidden={index !== current}
           />
         );
         })}
@@ -256,7 +244,7 @@ export default function MainBanner({ album }: MainBannerProps) {
         {banners.map((_, index) => (
           <span
             key={index}
-            onClick={() => setCurrent(index)}
+            onClick={() => goTo(index)}
             className={`${styles.dot} ${index === current ? ' ' + styles.active : ''}`}
           />
         ))}

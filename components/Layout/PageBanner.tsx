@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { PublicAlbum } from "@/services/publicPageService";
 import { resolveManagedAssetUrl, toCssBackgroundImage } from "@/lib/mediaAssets";
+import { useBannerCarousel } from "@/lib/useBannerCarousel";
 
 interface PageBannerProps {
   title?: string;
@@ -14,22 +14,14 @@ export default function PageBanner({
   imageOnly = true,
 }: PageBannerProps) {
   const banners = album?.banners || [];
-  const [current, setCurrent] = useState(0);
 
-  const interval =
-    typeof album?.transition === "number"
-      ? album.transition * 1000
-      : 5000;
-
-  useEffect(() => {
-    if (!banners.length) return;
-
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % banners.length);
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [banners.length, interval]);
+  const { isSlideVisible, getSlideAnimationClass, getSlideZIndex } =
+    useBannerCarousel(
+      banners.length,
+      album?.transition,
+      album?.transition_in,
+      album?.transition_out,
+    );
 
   if (banners.length > 0) {
     return (
@@ -42,11 +34,11 @@ export default function PageBanner({
           return (
             <div
               key={banner.id ?? index}
-              className="genchem-page-banner__slide"
+              className={`genchem-page-banner__slide ${getSlideAnimationClass(index)}`}
               style={{
                 backgroundImage,
-                opacity: index === current ? 1 : 0,
-                zIndex: index === current ? 1 : 0,
+                opacity: isSlideVisible(index) ? 1 : 0,
+                zIndex: getSlideZIndex(index),
               }}
             />
           );
