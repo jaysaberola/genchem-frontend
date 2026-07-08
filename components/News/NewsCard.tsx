@@ -61,7 +61,7 @@ export default function NewsCard({ article }: any) {
           className="dis-block txt4 m-t-30"
         >
           Continue Reading
-          <i className="fa-solid fa-arrow-right-long m-l-10" />
+          <i className="fa fa-angle-right m-l-10" />
         </Link>
       </div>
     </div>

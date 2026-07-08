@@ -70,7 +70,7 @@ export default function NewsItem({ article }: any) {
           style={{ textDecoration: "none" }}
         >
           Continue Reading
-          <i className="fa-solid fa-arrow-right-long m-l-10" />
+          <i className="fa fa-angle-right m-l-10" />
         </Link>
       </div>
     </div>
