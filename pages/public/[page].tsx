@@ -1,15 +1,23 @@
 import LandingPageLayout from "@/components/Layout/GuestLayout";
+import PrivateContentNotice from "@/components/Cms/PrivateContentNotice";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
 import { resolvePagePresentation } from "@/lib/cmsPageContent";
+import { getPrivateContentFromError } from "@/lib/cmsPrivateContent";
 import { CmsHtmlBlock } from "@/lib/publicClientComponents";
 import Head from "next/head";
 
 interface PublicPageViewProps {
-  pageData: PublicPage;
+  pageData: PublicPage | null;
+  isPrivate?: boolean;
+  privateTitle?: string;
 }
 
-export default function PublicPageView({ pageData }: PublicPageViewProps) {
-  if (!pageData) return <div>Page not found</div>;
+export default function PublicPageView({ pageData, isPrivate, privateTitle }: PublicPageViewProps) {
+  if (isPrivate) {
+    return <PrivateContentNotice title={privateTitle} kind="page" />;
+  }
+
+  if (!pageData) return <div className="container py-5 text-center text-secondary">Page not found</div>;
 
   const { htmlContent, css: cssStyles } = resolvePagePresentation(pageData);
 
@@ -56,6 +64,7 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         pageData,
+        isPrivate: false,
         footerData: footerRes.data ?? null,
         layout: {
           fullWidth: true,
@@ -63,7 +72,22 @@ export async function getServerSideProps(context: any) {
         },
       },
     };
-  } catch {
+  } catch (error) {
+    const privateInfo = getPrivateContentFromError(error);
+    if (privateInfo) {
+      return {
+        props: {
+          pageData: null,
+          isPrivate: true,
+          privateTitle: privateInfo.title ?? page,
+          footerData: null,
+          layout: {
+            fullWidth: true,
+            hideFooter: false,
+          },
+        },
+      };
+    }
     return { notFound: true };
   }
 }

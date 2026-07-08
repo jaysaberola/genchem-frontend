@@ -54,7 +54,7 @@ function ManageNews() {
     const raw = (row.status ?? row.visibility ?? "").toString().trim().toLowerCase();
     if (!raw) return "";
     if (raw === "publish" || raw === "published" || raw === "public") return "published";
-    if (raw === "private") return "private";
+    if (raw === "private" || raw === "inactive") return "private";
     if (raw === "draft") return "draft";
     if (raw === "deleted") return "deleted";
     return raw;

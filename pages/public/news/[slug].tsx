@@ -1,16 +1,23 @@
 import Head from "next/head";
 import { useEffect } from "react";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
+import PrivateContentNotice from "@/components/Cms/PrivateContentNotice";
 import { getArticleBySlug } from "@/services/articleService";
 import { articleToAlbum } from "@/schemas/articleToAlbum";
+import { getPrivateArticleFromError } from "@/lib/cmsPrivateContent";
 import { CmsHtmlBlock } from "@/lib/publicClientComponents";
 
 type Props = {
   pageData: any;
   article: any;
+  isPrivate?: boolean;
+  privateTitle?: string;
 };
 
-export default function NewsDetailPage({ article }: Props) {
+export default function NewsDetailPage({ article, isPrivate, privateTitle }: Props) {
+  if (isPrivate) {
+    return <PrivateContentNotice title={privateTitle} kind="article" />;
+  }
   // Parse the grapesjs json to extract css and js if needed
   let gjsCSS = "";
   let gjsJS = "";
@@ -98,9 +105,21 @@ export async function getServerSideProps({ params }: any) {
           album: articleToAlbum(res.data),
         },
         article: res.data,
+        isPrivate: false,
       },
     };
   } catch (error) {
+    const privateInfo = getPrivateArticleFromError(error);
+    if (privateInfo) {
+      return {
+        props: {
+          pageData: { title: privateInfo.title ?? params.slug },
+          article: null,
+          isPrivate: true,
+          privateTitle: privateInfo.title ?? params.slug,
+        },
+      };
+    }
     console.error("NewsDetailPage error:", error);
     return { notFound: true };
   }

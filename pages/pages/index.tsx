@@ -100,7 +100,7 @@ export default function ManagePages() {
     const raw = (row.status ?? row.visibility ?? "").toString().trim().toLowerCase();
     if (!raw) return "";
     if (raw === "publish" || raw === "published" || raw === "public") return "published";
-    if (raw === "private") return "private";
+    if (raw === "private" || raw === "inactive") return "private";
     if (raw === "draft") return "draft";
     if (raw === "deleted") return "deleted";
     return raw;
@@ -332,6 +332,11 @@ export default function ManagePages() {
       // Be defensive: some APIs may still include deleted rows even when show_deleted=0.
       // Keep deleted rows exclusively in the Trash view.
       let rows = useShowDeleted ? apiRows.filter(isRowDeleted) : apiRows.filter((r) => !isRowDeleted(r));
+      rows = rows.map((row: any) => ({
+        ...row,
+        status: row.status ?? row.visibility,
+        visibility: normalizePageStatus(row) || row.visibility || row.status,
+      }));
 
       // If backend doesn't support only_trashed/only_deleted but does support include-deleted,
       // retry with a simpler contract and keep Trash-only behavior via client-side filtering.
