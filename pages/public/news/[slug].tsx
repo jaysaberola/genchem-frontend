@@ -1,7 +1,9 @@
 import Head from "next/head";
+import { useEffect } from "react";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { getArticleBySlug } from "@/services/articleService";
 import { articleToAlbum } from "@/schemas/articleToAlbum";
+import { CmsHtmlBlock } from "@/lib/publicClientComponents";
 
 type Props = {
   pageData: any;
@@ -26,6 +28,16 @@ export default function NewsDetailPage({ article }: Props) {
   // Merge styles: prefer article.styles, fallback to parsed gjs-css
   const finalCSS = article.styles || gjsCSS || "";
 
+  useEffect(() => {
+    if (!gjsJS) return;
+    const script = document.createElement("script");
+    script.textContent = gjsJS;
+    document.body.appendChild(script);
+    return () => {
+      script.remove();
+    };
+  }, [gjsJS]);
+
   return (
     <>
       <Head>
@@ -34,12 +46,6 @@ export default function NewsDetailPage({ article }: Props) {
           name="description"
           content={article.meta_description || article.teaser}
         />
-        {/* Inject GrapesJS styles in <head> */}
-        {finalCSS && (
-          <style
-            dangerouslySetInnerHTML={{ __html: finalCSS }}
-          />
-        )}
       </Head>
 
       <div className="container">
@@ -70,18 +76,12 @@ export default function NewsDetailPage({ article }: Props) {
         )}
 
         {/* GRAPESJS CONTENT with styles scoped via wrapper */}
-        <div
-          id="gjs-content-wrapper"
+        <CmsHtmlBlock
+          html={article.contents}
+          css={finalCSS}
+          styleId="article-gjs-styles"
           className="article-content"
-          dangerouslySetInnerHTML={{ __html: article.contents }}
         />
-
-        {/* Inject GrapesJS JS at bottom if present */}
-        {gjsJS && (
-          <script
-            dangerouslySetInnerHTML={{ __html: gjsJS }}
-          />
-        )}
       </div>
     </>
   );

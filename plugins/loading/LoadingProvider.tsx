@@ -1,8 +1,10 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import LoadingOverlay from "@/components/UI/LoadingOverlay";
 import { registerLoading } from "./index";
+
+const LoadingOverlay = dynamic(() => import("@/components/UI/LoadingOverlay"), { ssr: false });
 
 export default function LoadingProvider({
   children,

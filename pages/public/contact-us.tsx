@@ -1,8 +1,8 @@
-import Head from "next/head";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
 import { resolvePagePresentation } from "@/lib/cmsPageContent";
 import { patchContactUsForm } from "@/lib/genchemContactForm";
+import { CmsHtmlBlock } from "@/lib/publicClientComponents";
 
 interface ContactUsPageProps {
   pageData: PublicPage;
@@ -35,26 +35,20 @@ export default function ContactUsPage({ pageData }: ContactUsPageProps) {
   const content = patchContactUsForm(htmlContent);
 
   return (
-    <>
-      <Head>
-        {css ? (
-          <style id="cms-contact-us-styles" dangerouslySetInnerHTML={{ __html: css }} />
-        ) : null}
-      </Head>
-
-      <div className="w-100 base-content genchem-contact-us-page public-contact">
-        {content ? (
-          <div
-            className="w-100 page-content cms-content public-page-content"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
-        ) : (
-          <div className="container py-5 text-center text-secondary">
-            <p>No content available for this page.</p>
-          </div>
-        )}
-      </div>
-    </>
+    <div className="w-100 base-content genchem-contact-us-page public-contact">
+      {content ? (
+        <CmsHtmlBlock
+          html={content}
+          css={css}
+          styleId="cms-contact-us-styles"
+          className="w-100 page-content cms-content public-page-content"
+        />
+      ) : (
+        <div className="container py-5 text-center text-secondary">
+          <p>No content available for this page.</p>
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import Head from "next/head";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { registerGenchemTabs } from "@/lib/genchemTabs";
 import { initGenchemVideos } from "@/lib/genchemMedia";
 import { initGenchemTrustBar } from "@/lib/genchemTrustBar";
 import { resolvePagePresentation } from "@/lib/cmsPageContent";
+import { CmsHtmlBlock } from "@/lib/publicClientComponents";
 
 export const BANNER_TITLE = "GENCHEM PH";
 
@@ -52,45 +52,39 @@ export default function Home({ pageData }: LandingPageLayoutProps) {
     }, [htmlContent]);
 
     return (
-        <>
-            {css ? (
-                <Head>
-                    <style id="cms-home-styles" dangerouslySetInnerHTML={{ __html: css }} />
-                </Head>
-            ) : null}
-
-            <div>
-                <div className="w-100 base-content">
-                    {htmlContent ? (
-                        <div
-                            className="w-100 page-content cms-content public-page-content"
-                            dangerouslySetInnerHTML={{ __html: htmlContent }}
-                        />
-                    ) : null}
-                </div>
-
-                <style jsx global>{`
-                    .cms-content img,
-                    .public-page-content img {
-                        max-width: 100%;
-                        height: auto;
-                    }
-                    .cms-content table,
-                    .public-page-content table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-bottom: 1rem;
-                    }
-                    .cms-content table td,
-                    .cms-content table th,
-                    .public-page-content table td,
-                    .public-page-content table th {
-                        border: 1px solid #dee2e6;
-                        padding: 0.5rem 0.75rem;
-                    }
-                `}</style>
+        <div>
+            <div className="w-100 base-content">
+                {htmlContent ? (
+                    <CmsHtmlBlock
+                        html={htmlContent}
+                        css={css}
+                        styleId="cms-home-styles"
+                        className="w-100 page-content cms-content public-page-content"
+                    />
+                ) : null}
             </div>
-        </>
+
+            <style jsx global>{`
+                .cms-content img,
+                .public-page-content img {
+                    max-width: 100%;
+                    height: auto;
+                }
+                .cms-content table,
+                .public-page-content table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 1rem;
+                }
+                .cms-content table td,
+                .cms-content table th,
+                .public-page-content table td,
+                .public-page-content table th {
+                    border: 1px solid #dee2e6;
+                    padding: 0.5rem 0.75rem;
+                }
+            `}</style>
+        </div>
     );
 }
 

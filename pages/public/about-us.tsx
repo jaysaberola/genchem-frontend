@@ -1,7 +1,7 @@
-import Head from "next/head";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
 import { resolvePagePresentation } from "@/lib/cmsPageContent";
+import { CmsHtmlBlock } from "@/lib/publicClientComponents";
 
 interface AboutUsPageProps {
   pageData: PublicPage;
@@ -33,26 +33,20 @@ export default function AboutUsPage({ pageData }: AboutUsPageProps) {
   const { htmlContent, css } = resolvePagePresentation(pageData);
 
   return (
-    <>
-      {css ? (
-        <Head>
-          <style id="cms-about-us-styles" dangerouslySetInnerHTML={{ __html: css }} />
-        </Head>
-      ) : null}
-
-      <div className="w-100 base-content">
-        {htmlContent ? (
-          <div
-            className="w-100 page-content cms-content public-page-content"
-            dangerouslySetInnerHTML={{ __html: htmlContent }}
-          />
-        ) : (
-          <div className="container py-5 text-center text-secondary">
-            <p>No content available for this page.</p>
-          </div>
-        )}
-      </div>
-    </>
+    <div className="w-100 base-content">
+      {htmlContent ? (
+        <CmsHtmlBlock
+          html={htmlContent}
+          css={css}
+          styleId="cms-about-us-styles"
+          className="w-100 page-content cms-content public-page-content"
+        />
+      ) : (
+        <div className="container py-5 text-center text-secondary">
+          <p>No content available for this page.</p>
+        </div>
+      )}
+    </div>
   );
 }
 

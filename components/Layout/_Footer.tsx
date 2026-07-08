@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
 import { resolveFooterPresentation } from "@/lib/cmsPageContent";
@@ -55,15 +54,10 @@ export default function CmsFooter({ initialData }: CmsFooterProps) {
 
   return (
     <>
-      {css ? (
-        <Head>
-          <style id="cms-footer-styles" dangerouslySetInnerHTML={{ __html: css }} />
-        </Head>
-      ) : null}
+      {css ? <style id="cms-footer-styles" dangerouslySetInnerHTML={{ __html: css }} /> : null}
       <div
         className="cms-footer-content genchem-footer-shell"
         dangerouslySetInnerHTML={{ __html: html }}
-        suppressHydrationWarning
       />
     </>
   );

@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
@@ -7,6 +6,7 @@ import { resolvePagePresentation } from "@/lib/cmsPageContent";
 import { activateTabFromHash, registerGenchemTabs } from "@/lib/genchemTabs";
 import { initGenchemProductCards } from "@/lib/genchemProductCards";
 import { initGenchemVideos } from "@/lib/genchemMedia";
+import { CmsHtmlBlock } from "@/lib/publicClientComponents";
 
 function scheduleTabFromHash(): void {
   activateTabFromHash();
@@ -80,26 +80,20 @@ export default function ProductsPage({ pageData }: ProductsPageProps) {
   }, [router, htmlContent]);
 
   return (
-    <>
-      <Head>
-        {css ? (
-          <style id="cms-products-styles" dangerouslySetInnerHTML={{ __html: css }} />
-        ) : null}
-      </Head>
-
-      <div className="w-100 base-content genchem-products-page">
-        {htmlContent ? (
-          <div
-            className="w-100 page-content cms-content public-page-content genchem-products-page"
-            dangerouslySetInnerHTML={{ __html: htmlContent }}
-          />
-        ) : (
-          <div className="container py-5 text-center text-secondary">
-            <p>No content available for this page.</p>
-          </div>
-        )}
-      </div>
-    </>
+    <div className="w-100 base-content genchem-products-page">
+      {htmlContent ? (
+        <CmsHtmlBlock
+          html={htmlContent}
+          css={css}
+          styleId="cms-products-styles"
+          className="w-100 page-content cms-content public-page-content genchem-products-page"
+        />
+      ) : (
+        <div className="container py-5 text-center text-secondary">
+          <p>No content available for this page.</p>
+        </div>
+      )}
+    </div>
   );
 }
 

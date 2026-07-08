@@ -295,7 +295,19 @@ export function rewriteCmsAssetUrls(html: string): string {
   const apiBase = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
   const frontendBase = (process.env.NEXT_PUBLIC_FRONTEND_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 
+  const productImageFixes: Record<string, string> = {
+    "AL51.png": "ALST.png",
+    "B45T.png": "BAST.png",
+    "C45T.png": "CAST.png",
+    "COST.png": "CDST.png",
+    "AIST.png": "ALST.png",
+  };
+
   let output = html;
+  for (const [wrong, right] of Object.entries(productImageFixes)) {
+    output = output.replaceAll(`/products/${wrong}`, `/products/${right}`);
+    output = output.replaceAll(`products/${wrong}`, `products/${right}`);
+  }
 
   // Normalize legacy absolute frontend URLs from older seeder runs
   output = output.replace(
