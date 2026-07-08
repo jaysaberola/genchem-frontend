@@ -57,6 +57,22 @@ export function resolveCompanyLogoUrl(path?: string | null): string | undefined 
   return resolveManagedAssetUrl(path);
 }
 
+/**
+ * Build a CSS-safe background-image value.
+ * Ensures URLs with spaces/parentheses are properly encoded and quoted.
+ */
+export function toCssBackgroundImage(url?: string | null): string | undefined {
+  const raw = (url ?? "").toString().trim();
+  if (!raw) return undefined;
+
+  if (raw.startsWith("data:") || raw.startsWith("blob:")) {
+    return `url("${raw.replace(/"/g, "%22")}")`;
+  }
+
+  const encoded = encodeURI(raw).replace(/"/g, "%22");
+  return `url("${encoded}")`;
+}
+
 export function resolveFaviconUrl(path?: string | null): string | undefined {
   const raw = (path ?? "").toString().trim();
   if (!raw) return undefined;

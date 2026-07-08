@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PublicAlbum } from "@/services/publicPageService";
 import styles from "@/styles/mainbanner.module.css";
-import { resolveManagedAssetUrl } from "@/lib/mediaAssets";
+import { resolveManagedAssetUrl, toCssBackgroundImage } from "@/lib/mediaAssets";
 
 interface MainBannerProps {
   album: PublicAlbum;
@@ -205,6 +205,7 @@ export default function MainBanner({ album }: MainBannerProps) {
         {banners.map((banner, index) => {
           const bgUrl =
             resolveManagedAssetUrl(banner.image_url) || banner.image_url;
+          const backgroundImage = toCssBackgroundImage(bgUrl);
 
           return (
           <div
@@ -212,7 +213,7 @@ export default function MainBanner({ album }: MainBannerProps) {
             className={styles.slide}
             style={{
               width: `${100 / banners.length}%`,
-              backgroundImage: bgUrl ? `url(${bgUrl})` : undefined,
+              backgroundImage,
             }}
           />
         );

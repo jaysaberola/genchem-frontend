@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { PublicAlbum } from "@/services/publicPageService";
-import { resolveManagedAssetUrl } from "@/lib/mediaAssets";
+import { resolveManagedAssetUrl, toCssBackgroundImage } from "@/lib/mediaAssets";
 
 interface PageBannerProps {
   title?: string;
@@ -37,13 +37,14 @@ export default function PageBanner({
         {banners.map((banner, index) => {
           const imageUrl =
             resolveManagedAssetUrl(banner.image_url) || banner.image_url;
+          const backgroundImage = toCssBackgroundImage(imageUrl);
 
           return (
             <div
               key={banner.id ?? index}
               className="genchem-page-banner__slide"
               style={{
-                backgroundImage: `url(${imageUrl})`,
+                backgroundImage,
                 opacity: index === current ? 1 : 0,
                 zIndex: index === current ? 1 : 0,
               }}
