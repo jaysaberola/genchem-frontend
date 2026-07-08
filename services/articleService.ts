@@ -293,5 +293,5 @@ export const getCategories = () =>
 export const getArchive = () =>
   axiosInstance.get("/public-articles-archive");
 
-export const getArticleBySlug = (slug: string) =>
-  axiosInstance.get(`/public-articles/${slug}`);
+export const getArticleBySlug = (slug: string, params?: { preview_token?: string }) =>
+  axiosInstance.get(`/public-articles/${slug}`, { params });

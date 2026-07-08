@@ -51,10 +51,11 @@ export default function PublicPageView({ pageData, isPrivate, privateTitle }: Pu
 
 export async function getServerSideProps(context: any) {
   const { page } = context.params;
+  const previewToken = typeof context.query?.preview_token === "string" ? context.query.preview_token : undefined;
 
   try {
     const [pageRes, footerRes] = await Promise.all([
-      getPublicPageBySlug(page),
+      getPublicPageBySlug(page, previewToken ? { preview_token: previewToken } : undefined),
       getPublicPageBySlug("footer"),
     ]);
     const pageData = pageRes.data ?? null;

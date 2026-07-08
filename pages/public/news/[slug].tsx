@@ -94,9 +94,16 @@ export default function NewsDetailPage({ article, isPrivate, privateTitle }: Pro
   );
 }
 
-export async function getServerSideProps({ params }: any) {
+export async function getServerSideProps({ params, query }: any) {
+  const previewToken =
+    typeof query?.preview_token === "string"
+      ? query.preview_token
+      : undefined;
   try {
-    const res = await getArticleBySlug(params.slug);
+    const res = await getArticleBySlug(
+      params.slug,
+      previewToken ? { preview_token: previewToken } : undefined,
+    );
 
     return {
       props: {

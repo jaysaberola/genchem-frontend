@@ -50,8 +50,8 @@ export interface PublicPage {
   };
 }
 
-export const getPublicPageBySlug = (slug: string) => {
-  return axiosInstance.get<PublicPage>(`/public/pages/${slug}`);
+export const getPublicPageBySlug = (slug: string, params?: { preview_token?: string }) => {
+  return axiosInstance.get<PublicPage>(`/public/pages/${slug}`, { params });
 };
 
 export type PublicMenuItem = {
