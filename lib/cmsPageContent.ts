@@ -301,13 +301,45 @@ export function rewriteCmsAssetUrls(html: string): string {
     "C45T.png": "CAST.png",
     "COST.png": "CDST.png",
     "AIST.png": "ALST.png",
+    "genchem-res-trip-product2.png": "trio_product2.png",
+    "genchem-res_trip-product2.png": "trio_product2.png",
+    "genchem-res-trip-product.png": "trio_product.png",
+    "genchem-res_trip-product.png": "trio_product.png",
   };
+
+  const bannerFiles = new Set([
+    "HOMEPAGE_ABOUT_US.png",
+    "home_header.png",
+    "about_us.png",
+    "our_products.png",
+    "contact_us.png",
+  ]);
 
   let output = html;
   for (const [wrong, right] of Object.entries(productImageFixes)) {
-    output = output.replaceAll(`/products/${wrong}`, `/products/${right}`);
-    output = output.replaceAll(`products/${wrong}`, `products/${right}`);
+    output = output.replaceAll(wrong, right);
+    output = output.replaceAll(`/images/${wrong}`, `/images/genchemph/products/${right}`);
   }
+
+  output = output.replace(
+    /(?<!genchemph\/)images\/(?!genchemph\/)([^"')\s]+)/g,
+    "images/genchemph/$1",
+  );
+
+  output = output.replace(
+    /(?:src|poster)=(["'])(?!https?:\/\/|\/|data:)([^"']+\.(?:png|jpe?g|gif|webp|svg|ico))\1/gi,
+    (match, quote: string, filename: string) => {
+      const attr = match.startsWith("poster") ? "poster" : "src";
+      const folder = bannerFiles.has(filename)
+        ? "banners"
+        : /logo/i.test(filename)
+          ? "logos"
+          : ["call.png", "mobile.png", "email.png", "globe.png", "call_red.png"].includes(filename)
+            ? "icons"
+            : "products";
+      return `${attr}=${quote}/images/genchemph/${folder}/${filename}${quote}`;
+    },
+  );
 
   // Normalize legacy absolute frontend URLs from older seeder runs
   output = output.replace(
