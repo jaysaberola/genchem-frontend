@@ -301,6 +301,8 @@ export function rewriteCmsAssetUrls(html: string): string {
     "C45T.png": "CAST.png",
     "COST.png": "CDST.png",
     "AIST.png": "ALST.png",
+    "trip_product2.png": "trio_product2.png",
+    "trip_product.png": "trio_product.png",
     "genchem-res-trip-product2.png": "trio_product2.png",
     "genchem-res_trip-product2.png": "trio_product2.png",
     "genchem-res-trip-product.png": "trio_product.png",
