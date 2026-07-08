@@ -8,7 +8,10 @@ export default function NewsItem({ article }: any) {
 
   return (
     <div className="blo4 p-b-63">
-      <div className="pic-blo4 hov-img-zoom bo-rad-10 pos-relative">
+      <div
+        className="pic-blo4 hov-img-zoom bo-rad-10 pos-relative"
+        style={{ maxWidth: "720px" }}
+      >
         <Link href={`/public/news/${article.slug}`}>
           <img
             src={
@@ -19,6 +22,7 @@ export default function NewsItem({ article }: any) {
             alt={article.name}
             loading="lazy"
             decoding="async"
+            style={{ width: "100%", height: "360px", objectFit: "cover" }}
           />
         </Link>
 
@@ -33,7 +37,11 @@ export default function NewsItem({ article }: any) {
 
       <div className="text-blo4 p-t-33">
         <h4 className="p-b-16">
-          <Link href={`/public/news/${article.slug}`} className="tit9">
+          <Link
+            href={`/public/news/${article.slug}`}
+            className="tit9"
+            style={{ textDecoration: "none" }}
+          >
             {article.name}
           </Link>
         </h4>
@@ -59,6 +67,7 @@ export default function NewsItem({ article }: any) {
         <Link
           href={`/public/news/${article.slug}`}
           className="dis-block txt4 m-t-30"
+          style={{ textDecoration: "none" }}
         >
           Continue Reading
           <i className="fa-solid fa-arrow-right-long m-l-10" />

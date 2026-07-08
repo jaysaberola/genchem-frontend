@@ -70,18 +70,6 @@ export default function NewsDetailPage({ article, isPrivate, privateTitle }: Pro
           {article.category?.name && <> &nbsp;|&nbsp; {article.category.name}</>}
         </div>
 
-        {/* FEATURED IMAGE */}
-        {(article.thumbnail_url || article.image_url) && (
-          <div className="mb-5 text-center">
-            <img
-              src={article.thumbnail_url || article.image_url}
-              alt={article.name}
-              className="img-fluid rounded"
-              style={{ maxWidth: "500px" }}
-            />
-          </div>
-        )}
-
         {/* GRAPESJS CONTENT with styles scoped via wrapper */}
         <CmsHtmlBlock
           html={article.contents}
