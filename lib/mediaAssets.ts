@@ -13,11 +13,12 @@ export function resolveManagedAssetUrl(path?: string | null): string | undefined
   if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
   if (raw.startsWith("//")) return `https:${raw}`;
 
+  const base = apiBase();
+
   if (raw.startsWith("/images/") || raw.startsWith("/img/") || raw.startsWith("/icons/")) {
     return base ? `${base}${raw}` : raw;
   }
 
-  const base = apiBase();
   let rel = raw.replace(/\\/g, "/").replace(/^\.\/?/, "");
 
   if (base && rel.startsWith(base)) {
