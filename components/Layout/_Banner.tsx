@@ -6,18 +6,27 @@ interface BannerProps {
   title?: string;
   subtitle?: string;
   album?: PublicAlbum | null;
+  imageUrl?: string | null;
 }
 
 export default function Banner({
   title,
   subtitle,
   album,
+  imageUrl,
 }: BannerProps) {
-  if (!album?.banners?.length || title === "News") {
+  if (title === "News") {
     return null;
   }
 
-  if (album.type === "main_banner") {
+  const hasAlbumBanners = Boolean(album?.banners?.length);
+  const hasImageBanner = Boolean(imageUrl?.trim());
+
+  if (!hasAlbumBanners && !hasImageBanner) {
+    return null;
+  }
+
+  if (hasAlbumBanners && album?.type === "main_banner") {
     return <MainBanner album={album} />;
   }
 
@@ -26,6 +35,7 @@ export default function Banner({
       title={title}
       subtitle={subtitle}
       album={album}
+      imageUrl={imageUrl}
       imageOnly
     />
   );

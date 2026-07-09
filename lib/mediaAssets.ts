@@ -14,7 +14,7 @@ export function resolveManagedAssetUrl(path?: string | null): string | undefined
   if (raw.startsWith("//")) return `https:${raw}`;
 
   if (raw.startsWith("/images/") || raw.startsWith("/img/") || raw.startsWith("/icons/")) {
-    return raw;
+    return base ? `${base}${raw}` : raw;
   }
 
   const base = apiBase();

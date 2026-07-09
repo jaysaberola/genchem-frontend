@@ -17,6 +17,7 @@ interface LandingPageLayoutProps {
   pageData?: {
     title?: string;
     slug?: string;
+    image_url?: string;
     album?: PublicAlbum | null;
   };
   layout?: {
@@ -27,11 +28,11 @@ interface LandingPageLayoutProps {
 }
 
 function shouldOverlayHero(pageData?: LandingPageLayoutProps["pageData"]): boolean {
-  const album = pageData?.album;
-  const title = pageData?.title;
+  if (pageData?.title === "News") return false;
+  if (pageData?.image_url?.trim()) return true;
 
+  const album = pageData?.album;
   if (!album?.banners?.length) return false;
-  if (title === "News") return false;
 
   return true;
 }
@@ -85,7 +86,11 @@ export default function LandingPageLayout({
           .filter(Boolean)
           .join(" ")}
       >
-        <Banner title={pageData?.title} album={pageData?.album} />
+        <Banner
+          title={pageData?.title}
+          album={pageData?.album}
+          imageUrl={pageData?.image_url}
+        />
       </div>
 
       {overlayHero && (
