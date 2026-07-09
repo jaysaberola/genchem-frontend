@@ -4,6 +4,7 @@ import Head from "next/head";
 import Banner from "./_Banner";
 import Header from "@/components/Layout/_Header";
 import FloatingLogo from "@/components/Layout/FloatingLogo";
+import PublicScripts from "@/components/Layout/PublicScripts";
 import { PublicAlbum, PublicPage } from "@/services/publicPageService";
 import {
   CmsFooter,
@@ -70,10 +71,7 @@ export default function LandingPageLayout({
   return (
     <div className="genchemph stretched has-plugin-html5video">
       <Head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css"
-        />
+        <link rel="stylesheet" href="/css/animate.min.css" />
       </Head>
       <Header overlayHero={overlayHero} />
 
@@ -107,6 +105,7 @@ export default function LandingPageLayout({
       <GoToTop />
       <ToastHost />
       <GenchemCmsRuntime />
+      <PublicScripts />
     </div>
   );
 }

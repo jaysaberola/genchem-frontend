@@ -45,13 +45,6 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             crossOrigin="anonymous"
           />
         )}
-
-        <Script src="/js/bootstrap.bundle.min.js" strategy="afterInteractive" />
-        <Script src="/js/flatpickr.min.js" strategy="afterInteractive" />
-        <Script src="/js/glightbox.min.js" strategy="afterInteractive" />
-        <Script src="/js/swiper-bundle.min.js" strategy="afterInteractive" />
-        <Script src="/js/swiper-custom.js" strategy="afterInteractive" />
-        <Script src="/js/main.js" strategy="afterInteractive" />
       </Layout>
     </LoadingProvider>
   );

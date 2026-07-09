@@ -1,4 +1,12 @@
 const HOVER_SCALE = "scale(0.9)";
+const MOBILE_PRODUCTS_QUERY = "(max-width: 991px)";
+
+function isMobileProductLayout(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia(MOBILE_PRODUCTS_QUERY).matches
+  );
+}
 
 function bindProductImageHover(img: HTMLImageElement, link: HTMLAnchorElement | null): void {
   if (img.dataset.genchemHoverBound === "1") return;
@@ -17,13 +25,73 @@ function bindProductImageHover(img: HTMLImageElement, link: HTMLAnchorElement | 
   }
 }
 
+function resetProductCardLayout(card: HTMLElement): void {
+  const link = card.querySelector<HTMLAnchorElement>("a");
+  const img = card.querySelector<HTMLImageElement>("img");
+
+  if (link) {
+    link.style.position = "";
+    link.style.bottom = "";
+    link.style.left = "";
+    link.style.right = "";
+    link.style.zIndex = "";
+    link.style.display = "";
+    link.style.lineHeight = "";
+    link.style.textDecoration = "";
+    link.style.pointerEvents = "";
+    link.style.width = "";
+    link.style.height = "";
+  }
+
+  if (img) {
+    img.style.position = "";
+    img.style.bottom = "";
+    img.style.left = "";
+    img.style.right = "";
+    img.style.maxWidth = "";
+    img.style.width = "";
+    img.style.height = "";
+    img.style.zIndex = "";
+    img.style.background = "";
+    img.style.cursor = "";
+    img.style.pointerEvents = "";
+    img.style.transformOrigin = "";
+    img.style.transition = "";
+    img.style.transform = "";
+    img.style.margin = "";
+    img.style.display = "";
+  }
+}
+
+function ensureProductCardsResizeListener(): void {
+  if (typeof window === "undefined" || document.body.dataset.genchemProductCardsResize === "1") {
+    return;
+  }
+
+  document.body.dataset.genchemProductCardsResize = "1";
+  window.addEventListener("resize", () => {
+    window.requestAnimationFrame(() => initGenchemProductCards());
+  });
+}
+
 /** Apply genchemph reference product bag overlap (curve box + image outside border). */
 export function initGenchemProductCards(root: ParentNode = document): void {
+  ensureProductCardsResizeListener();
+
   const cards = root.querySelectorAll<HTMLElement>(
     ".bg-dark-red .border-2-white.position-relative, .bg-dark-red .rounded-lg.border-2-white",
   );
 
+  const mobileLayout = isMobileProductLayout();
+
   cards.forEach((card) => {
+    card.classList.add("width-img-control");
+
+    if (mobileLayout) {
+      resetProductCardLayout(card);
+      return;
+    }
+
     const row = card.parentElement;
     if (!row) return;
 
@@ -32,8 +100,6 @@ export function initGenchemProductCards(root: ParentNode = document): void {
     );
     const index = siblings.indexOf(card);
     const isRightImage = index % 2 === 1;
-
-    card.classList.add("width-img-control");
 
     const link = card.querySelector<HTMLAnchorElement>("a");
     if (link) {

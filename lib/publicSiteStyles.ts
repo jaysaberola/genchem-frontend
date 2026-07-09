@@ -19,7 +19,7 @@ export const PUBLIC_LOCAL_STYLESHEETS = [
   "/css/custom.css",
   "/css/genchemph-grapesjs.css?v=3",
   "/css/genchemph-cms-typography.css?v=3",
-  "/css/genchemph-products.css?v=10",
+  "/css/genchemph-products.css?v=12",
   "/css/genchemph-home-intro.css?v=5",
   "/css/genchemph-contact-us.css?v=2",
   "/css/cms-footer.css?v=8",
