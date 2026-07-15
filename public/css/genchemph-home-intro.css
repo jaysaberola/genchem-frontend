@@ -105,6 +105,22 @@
   list-style: none !important;
 }
 
+@media (min-width: 768px) {
+  .cms-content .about-us-low[style*="background-image"] ul.fs-4 li,
+  .cms-content #iz2p ul.fs-4 li,
+  .cms-content .home-intro-hero ul.fs-4 li,
+  .public-page-content .about-us-low[style*="background-image"] ul.fs-4 li,
+  .public-page-content #iz2p ul.fs-4 li,
+  .public-page-content .home-intro-hero ul.fs-4 li,
+  .genchemph-canvas .about-us-low[style*="background-image"] ul.fs-4 li,
+  .genchemph-canvas #iz2p ul.fs-4 li,
+  .genchemph-canvas .home-intro-hero ul.fs-4 li,
+  .about-us-low[style*="background-image"] ul.fs-4 li,
+  #iz2p ul.fs-4 li {
+    white-space: nowrap;
+  }
+}
+
 /* Reference: white outline circle + check (bi-check2-circle look) */
 .cms-content .about-us-low[style*="background-image"] ul.fs-4 li::before,
 .cms-content #iz2p ul.fs-4 li::before,
@@ -147,7 +163,8 @@
 .genchemph-canvas .about-us-low[style*="background-image"] .about-us-high .row.d-flex.justify-content-center,
 .about-us-low[style*="background-image"] .about-us-high .row.d-flex.justify-content-center,
 #iz2p .about-us-high .row.d-flex.justify-content-center {
-  max-width: 920px;
+  width: 100%;
+  max-width: 1180px;
   margin-left: auto !important;
   margin-right: auto !important;
 }
@@ -157,8 +174,20 @@
 .genchemph-canvas .about-us-low[style*="background-image"] .about-us-high .row.d-flex.justify-content-center > .col-md-6,
 .about-us-low[style*="background-image"] .about-us-high .row.d-flex.justify-content-center > .col-md-6,
 #iz2p .about-us-high .row.d-flex.justify-content-center > .col-md-6 {
-  padding-left: 1.25rem !important;
-  padding-right: 1.25rem !important;
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+}
+
+@media (min-width: 768px) {
+  .cms-content .about-us-low[style*="background-image"] .about-us-high .row.d-flex.justify-content-center > .col-md-6,
+  .public-page-content .about-us-low[style*="background-image"] .about-us-high .row.d-flex.justify-content-center > .col-md-6,
+  .genchemph-canvas .about-us-low[style*="background-image"] .about-us-high .row.d-flex.justify-content-center > .col-md-6,
+  .about-us-low[style*="background-image"] .about-us-high .row.d-flex.justify-content-center > .col-md-6,
+  #iz2p .about-us-high .row.d-flex.justify-content-center > .col-md-6 {
+    flex: 0 0 50% !important;
+    width: 50% !important;
+    max-width: 50% !important;
+  }
 }
 
 /* Read More — keep dark text on white; white text on maroon hover */
