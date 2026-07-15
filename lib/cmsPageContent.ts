@@ -77,7 +77,55 @@ export function patchHomeIntroHero(html: string): string {
     addHeroClass,
   );
 
-  return output;
+  // Home intro block in CMS often lacks id="iz2p" — add it to the background-image hero
+  if (!output.includes('id="iz2p"') && !output.includes("id='iz2p'")) {
+    output = output.replace(
+      /(<div\b)(?=[^>]*\bclass="[^"]*\babout-us-low\b)(?=[^>]*style="[^"]*background-image)([\s\S]*?)(>)/i,
+      (_match, tag: string, attrs: string, close: string) => {
+        if (/\bid=["']iz2p["']/i.test(attrs)) return _match;
+        let patchedAttrs = attrs;
+        if (!/\bhome-intro-hero\b/.test(patchedAttrs)) {
+          patchedAttrs = patchedAttrs.replace(
+            /\bclass="([^"]*)"/,
+            (_classMatch, classes: string) => `class="${classes} home-intro-hero"`,
+          );
+        }
+        return `${tag}${patchedAttrs} id="iz2p"${close}`;
+      },
+    );
+  }
+
+  output = output.replace(/\bclass="bi-check2-circle\b/g, 'class="bi bi-check2-circle');
+
+  return patchHomeIntroChecklist(output);
+}
+
+const HOME_INTRO_CHECK_ICON =
+  '<i class="bi bi-check2-circle me-2 flex-shrink-0" aria-hidden="true"></i>';
+
+/** Ensure home hero feature list items show checkmark bullets. */
+export function patchHomeIntroChecklist(html: string): string {
+  if (!html.includes("fs-4")) return html;
+
+  const hasHero =
+    html.includes('id="iz2p"') ||
+    html.includes("home-intro-hero") ||
+    /about-us-low[^>]*style="[^"]*background-image/i.test(html);
+  if (!hasHero) return html;
+
+  return html.replace(
+    /(<ul\b[^>]*\bclass="[^"]*\bfs-4\b[^"]*"[^>]*>)([\s\S]*?)(<\/ul>)/gi,
+    (_match, open: string, body: string, close: string) => {
+      const patchedBody = body.replace(
+        /<li(\s[^>]*)?>([\s\S]*?)<\/li>/gi,
+        (liMatch: string, attrs = "", inner: string) => {
+          if (/\bbi-check2-circle\b/i.test(inner)) return liMatch;
+          return `<li${attrs}>${HOME_INTRO_CHECK_ICON}${inner}</li>`;
+        },
+      );
+      return `${open}${patchedBody}${close}`;
+    },
+  );
 }
 
 /** Rename legacy #tab-1 / #tab-2 to named slugs (#pvc-resins / #pvc-stabilizers). */
