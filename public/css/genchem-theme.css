@@ -526,12 +526,25 @@ body {
 @media (max-width: 991px) {
   .genchem-hero-shell--overlay,
   .genchem-hero-shell--subpage {
-    min-height: 42vh;
+    min-height: 32vh;
   }
 
   .genchem-page-banner,
   .genchem-page-banner--fallback {
-    min-height: 42vh;
+    min-height: 32vh;
+  }
+
+  .floating-logo--subpage .floating-logo__mark {
+    top: -56px;
+  }
+
+  .floating-logo--subpage {
+    min-height: 56px;
+  }
+
+  .floating-logo--subpage .floating-logo__img,
+  .floating-logo--subpage img {
+    max-width: 170px;
   }
 
   .genchemph #header #header-wrap {

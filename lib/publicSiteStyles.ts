@@ -11,9 +11,9 @@ export const PUBLIC_LOCAL_STYLESHEETS = [
   "/css/product.css",
   "/css/banner.css",
   "/css/navigation.css",
-  "/css/genchem-theme.css",
+  "/css/genchem-theme.css?v=2",
   "/css/genchemph-design.css",
-  "/css/genchemph-about-us.css?v=3",
+  "/css/genchemph-about-us.css?v=4",
   "/css/genchemph-drone.css",
   "/css/public-overrides.css",
   "/css/custom.css",
@@ -21,7 +21,7 @@ export const PUBLIC_LOCAL_STYLESHEETS = [
   "/css/genchemph-cms-typography.css?v=3",
   "/css/genchemph-products.css?v=12",
   "/css/genchemph-home-intro.css?v=10",
-  "/css/genchemph-contact-us.css?v=2",
+  "/css/genchemph-contact-us.css?v=3",
   "/css/cms-footer.css?v=8",
 ] as const;
 
