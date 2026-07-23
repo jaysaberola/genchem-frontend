@@ -1,8 +1,9 @@
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
 import { resolvePagePresentation } from "@/lib/cmsPageContent";
-import { patchContactUsForm } from "@/lib/genchemContactForm";
+import { initGenchemContactForm, patchContactUsForm } from "@/lib/genchemContactForm";
 import { CmsHtmlBlock } from "@/lib/publicClientComponents";
+import { useEffect } from "react";
 
 interface ContactUsPageProps {
   pageData: PublicPage;
@@ -33,6 +34,10 @@ export async function getServerSideProps() {
 export default function ContactUsPage({ pageData }: ContactUsPageProps) {
   const { htmlContent, css } = resolvePagePresentation(pageData);
   const content = patchContactUsForm(htmlContent);
+
+  useEffect(() => {
+    initGenchemContactForm();
+  }, [content]);
 
   return (
     <div className="w-100 base-content genchem-contact-us-page public-contact">
