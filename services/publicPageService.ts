@@ -92,5 +92,9 @@ export const sendContactMessage = (payload: {
   contact: string;
   message: string;
 }) => {
+  if (typeof window !== "undefined") {
+    return axiosInstance.post("/api/contact", payload, { baseURL: "" });
+  }
+
   return axiosInstance.post("/contact", payload);
 };
