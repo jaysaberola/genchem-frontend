@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { PublicMenuItem } from "@/services/publicPageService";
 import { navigateToProductTab, parseProductTabFromHref } from "@/lib/genchemTabs";
 import { getProductTabSlug, normalizeProductTabHash } from "@/lib/genchemProductTabs";
+
+const MOBILE_MENU_QUERY = "(max-width: 991px)";
 
 function normalizePath(url: string): string {
   try {
@@ -40,10 +42,22 @@ export default function MenuItem({
   onNavigate?: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const media = window.matchMedia(MOBILE_MENU_QUERY);
+    const sync = () => setIsMobileViewport(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
 
   const href = item.target;
   const isInternal = item.type === "page";
   const hasChildren = item.children && item.children.length > 0;
+  const useMobileSubmenu = isMobile && isMobileViewport && hasChildren;
 
   const hrefPath = normalizePath(href);
   const isCurrent =
@@ -54,10 +68,15 @@ export default function MenuItem({
 
   const isHighlighted = isCurrent || isChildCurrent;
 
+  const handleParentToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpen((prev) => !prev);
+  };
+
   const handleLinkClick = (e: React.MouseEvent) => {
-    if (isMobile && hasChildren) {
-      e.preventDefault();
-      setOpen((prev) => !prev);
+    if (useMobileSubmenu) {
+      handleParentToggle(e);
       return;
     }
     if (isMobile) onNavigate?.();
@@ -72,21 +91,36 @@ export default function MenuItem({
     if (isMobile) onNavigate?.();
   };
 
-  const linkProps = {
-    className: `menu-link fs-5 ${isHighlighted ? "active" : ""}`,
-    style: { textDecoration: "none" } as const,
-    onClick: handleLinkClick,
-  };
+  const linkClassName = `menu-link fs-5 ${isHighlighted ? "active" : ""}`;
+  const linkStyle = { textDecoration: "none" } as const;
+
+  const parentLabel = <div>{item.label}</div>;
 
   return (
     <li className={`menu-item ${isHighlighted ? "current" : ""} ${open ? "open" : ""}`}>
-      {isInternal ? (
-        <Link href={href} {...linkProps}>
-          <div>{item.label}</div>
+      {useMobileSubmenu ? (
+        <button
+          type="button"
+          className={`${linkClassName} genchem-menu-toggle`}
+          style={linkStyle}
+          aria-expanded={open}
+          onClick={handleParentToggle}
+        >
+          {parentLabel}
+        </button>
+      ) : isInternal ? (
+        <Link href={href} className={linkClassName} style={linkStyle} onClick={handleLinkClick}>
+          {parentLabel}
         </Link>
       ) : (
-        <a href={href} {...linkProps} rel="noopener noreferrer">
-          <div>{item.label}</div>
+        <a
+          href={href}
+          className={linkClassName}
+          style={linkStyle}
+          rel="noopener noreferrer"
+          onClick={handleLinkClick}
+        >
+          {parentLabel}
         </a>
       )}
 

@@ -109,7 +109,12 @@ export function navigateToProductTab(href: string): void {
   const target = productTabHref(tabNumber);
 
   if (isProductsPagePath(window.location.pathname)) {
-    window.location.href = `/public/products?t=${Date.now()}#${slug}`;
+    const nextUrl = `/public/products#${slug}`;
+    if (window.location.pathname + window.location.hash !== nextUrl) {
+      window.history.pushState(null, "", nextUrl);
+    }
+    gcSwitchTab(tabNumber);
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
     return;
   }
 

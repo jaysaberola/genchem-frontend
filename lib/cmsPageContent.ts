@@ -184,6 +184,7 @@ export function patchCmsStyles(css: string): string {
     .replace(/@media[^{]*\{[^}]*\.width-img-control\s*\{[^}]*min-height[^}]*\}[^}]*\}/gi, "")
     .replace(/\.width-img-control\s*\{[^}]*min-height[^}]*\}/gi, "")
     .replace(/background-color:\s*#d9d9d9/gi, "background-color: #ffffff")
+    .replace(/#[a-z0-9]+\s*\{\s*margin-top:\s*-40px;\s*\}/gi, "")
     .replace(
       /\.about-us-high\s*\{\s*position:\s*relative;\s*z-index:\s*2;\s*color:\s*white;\s*\}/gi,
       '.about-us-low[style*="background-image"] .about-us-high { position: relative; z-index: 2; color: white; }',
