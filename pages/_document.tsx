@@ -28,6 +28,7 @@ export default class CustomDocument extends Document<CustomDocumentProps> {
     return (
       <Html lang="en">
         <Head>
+          <title>GenChem PH</title>
           {stylesheetHrefs.map((href) => (
             <link key={href} rel="stylesheet" href={href} />
           ))}

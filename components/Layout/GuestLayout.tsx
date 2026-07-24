@@ -5,7 +5,12 @@ import Banner from "./_Banner";
 import Header from "@/components/Layout/_Header";
 import FloatingLogo from "@/components/Layout/FloatingLogo";
 import PublicScripts from "@/components/Layout/PublicScripts";
-import { PublicAlbum, PublicPage } from "@/services/publicPageService";
+import { PublicPage } from "@/services/publicPageService";
+import {
+  getPublicPageDocumentTitle,
+  getPublicPageMetaDescription,
+  getPublicPageMetaKeywords,
+} from "@/lib/publicPageMeta";
 import {
   CmsFooter,
   GenchemCmsRuntime,
@@ -15,12 +20,10 @@ import {
 
 interface LandingPageLayoutProps {
   children: React.ReactNode;
-  pageData?: {
-    title?: string;
-    slug?: string;
-    image_url?: string;
-    album?: PublicAlbum | null;
-  };
+  pageData?: Pick<
+    PublicPage,
+    "title" | "label" | "slug" | "image_url" | "meta" | "album"
+  >;
   layout?: {
     fullWidth?: boolean;
     hideFooter?: boolean;
@@ -46,6 +49,9 @@ export default function LandingPageLayout({
 }: LandingPageLayoutProps) {
   const overlayHero = shouldOverlayHero(pageData);
   const isHomeBanner = pageData?.album?.type === "main_banner";
+  const documentTitle = getPublicPageDocumentTitle(pageData);
+  const metaDescription = getPublicPageMetaDescription(pageData);
+  const metaKeywords = getPublicPageMetaKeywords(pageData);
 
   const contentWrapperClassName = layout?.fullWidth ? "container-fluid px-0" : "";
   const mainClassName = [
@@ -71,6 +77,11 @@ export default function LandingPageLayout({
   return (
     <div className="genchemph stretched has-plugin-html5video">
       <Head>
+        <title>{documentTitle}</title>
+        {metaDescription ? (
+          <meta name="description" content={metaDescription} />
+        ) : null}
+        {metaKeywords ? <meta name="keywords" content={metaKeywords} /> : null}
         <link rel="stylesheet" href="/css/animate.min.css" />
       </Head>
       <Header overlayHero={overlayHero} />

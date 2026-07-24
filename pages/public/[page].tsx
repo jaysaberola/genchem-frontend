@@ -4,7 +4,6 @@ import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
 import { resolvePagePresentation } from "@/lib/cmsPageContent";
 import { getPrivateContentFromError } from "@/lib/cmsPrivateContent";
 import { CmsHtmlBlock } from "@/lib/publicClientComponents";
-import Head from "next/head";
 
 interface PublicPageViewProps {
   pageData: PublicPage | null;
@@ -23,16 +22,6 @@ export default function PublicPageView({ pageData, isPrivate, privateTitle }: Pu
 
   return (
     <>
-      <Head>
-        {pageData.meta?.title && <title>{pageData.meta.title}</title>}
-        {pageData.meta?.description && (
-          <meta name="description" content={pageData.meta.description} />
-        )}
-        {pageData.meta?.keywords && (
-          <meta name="keywords" content={pageData.meta.keywords} />
-        )}
-      </Head>
-
       {htmlContent ? (
         <CmsHtmlBlock
           html={htmlContent}
