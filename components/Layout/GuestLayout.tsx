@@ -17,6 +17,7 @@ import {
   GoToTop,
   ToastHost,
 } from "@/lib/publicClientComponents";
+import WebsiteFaviconHead from "@/components/Layout/WebsiteFaviconHead";
 
 interface LandingPageLayoutProps {
   children: React.ReactNode;
@@ -76,6 +77,7 @@ export default function LandingPageLayout({
 
   return (
     <div className="genchemph stretched has-plugin-html5video">
+      <WebsiteFaviconHead />
       <Head>
         <title>{documentTitle}</title>
         {metaDescription ? (

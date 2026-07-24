@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Sidebar from './_Sidebar';
 import Topbar from './_Topbar2';
 import ToastHost from "@/components/UI/ToastHost";
+import WebsiteFaviconHead from "@/components/Layout/WebsiteFaviconHead";
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
@@ -28,7 +29,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), []);
 
   return (
-    <div
+    <>
+      <WebsiteFaviconHead />
+      <div
       className={`cms-admin-layout d-flex vh-100 bg-light ${
         sidebarOpen ? "cms-admin-layout--sidebar-open" : ""
       }`}
@@ -51,5 +54,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       <ToastHost />
     </div>
+    </>
   );
 }

@@ -15,10 +15,26 @@ export {
 
 export type WebsiteSettings = {
   company_logo?: string | null;
+  company_logo_url?: string | null;
+  website_favicon?: string | null;
+  website_favicon_url?: string | null;
   website_name?: string | null;
   company_name?: string | null;
   [key: string]: any;
 };
+
+export function resolveHeaderFaviconUrl(
+  settings: WebsiteSettings | Record<string, unknown> | null | undefined
+): string | undefined {
+  if (!settings) return undefined;
+
+  const directUrl = settings.website_favicon_url;
+  if (typeof directUrl === "string" && directUrl.trim()) {
+    return directUrl.trim();
+  }
+
+  return resolveFaviconUrl(settings.website_favicon as string | null | undefined);
+}
 
 export const WEBSITE_SETTINGS_STORAGE_KEY = "cms4.websiteSettings.v1";
 export const WEBSITE_SETTINGS_UPDATED_EVENT = "cms4:website-settings-updated";
