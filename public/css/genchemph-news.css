@@ -1,0 +1,309 @@
+/* Public news — category tabs + article grid */
+
+.genchem-news-page {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.genchem-news-shell {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.genchem-news-header {
+  padding: 1.75rem 1.75rem 0;
+}
+
+.genchem-news-header small {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.genchem-news-header h1 {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: #b91c1c;
+  margin-bottom: 0;
+}
+
+.genchem-news-tabs-wrap {
+  padding: 1.25rem 1.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.genchem-news-page .genchem-news-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.genchem-news-page .genchem-news-tab {
+  margin: 0;
+  list-style: none;
+}
+
+.genchem-news-page .genchem-news-tab-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: #475569 !important;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.genchem-news-page .genchem-news-tab-link:hover {
+  color: #b91c1c !important;
+  background: #fef2f2;
+}
+
+.genchem-news-page .genchem-news-tab-link.active {
+  color: #b91c1c !important;
+  border-bottom-color: #b91c1c;
+  background: #fff;
+}
+
+.genchem-news-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.genchem-news-tab-link.active .genchem-news-tab-count {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.genchem-news-body {
+  display: grid;
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+  gap: 0;
+}
+
+.genchem-news-sidebar {
+  padding: 1.75rem;
+  border-right: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.genchem-news-main {
+  padding: 1.75rem;
+}
+
+.genchem-news-search {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.genchem-news-search input {
+  width: 100%;
+  padding: 0.75rem 2.75rem 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+
+.genchem-news-search input:focus {
+  outline: none;
+  border-color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+}
+
+.genchem-news-search button {
+  position: absolute;
+  top: 50%;
+  right: 0.35rem;
+  transform: translateY(-50%);
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: #b91c1c;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.genchem-news-sidebar-section + .genchem-news-sidebar-section {
+  margin-top: 1.75rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.genchem-news-sidebar-title {
+  margin-bottom: 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.genchem-news-sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.genchem-news-sidebar-item + .genchem-news-sidebar-item {
+  margin-top: 0.35rem;
+}
+
+.genchem-news-sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #334155;
+  font-size: 0.92rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.genchem-news-sidebar-link:hover,
+.genchem-news-sidebar-link.active {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.genchem-news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.genchem-news-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.genchem-news-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+}
+
+.genchem-news-card-image {
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.genchem-news-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.genchem-news-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 1.15rem;
+}
+
+.genchem-news-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  margin-bottom: 0.65rem;
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.genchem-news-card-title {
+  margin-bottom: 0.65rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.genchem-news-card-title a {
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.genchem-news-card-title a:hover {
+  color: #b91c1c;
+}
+
+.genchem-news-card-excerpt {
+  flex: 1;
+  margin-bottom: 1rem;
+  color: #475569;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.genchem-news-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #b91c1c;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.genchem-news-empty,
+.genchem-news-loading {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: #64748b;
+}
+
+@media (max-width: 991px) {
+  .genchem-news-body {
+    grid-template-columns: 1fr;
+  }
+
+  .genchem-news-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .genchem-news-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+  }
+
+  .genchem-news-tab-link {
+    white-space: nowrap;
+  }
+}

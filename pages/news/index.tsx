@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import type { GetServerSideProps } from "next";
 import AdminLayout from "@/components/Layout/AdminLayout";
 import DataTable, { Column } from "@/components/UI/DataTable";
 import SearchBar from "@/components/UI/SearchBar";
@@ -14,6 +15,7 @@ import {
   ArticleRow,
 } from "@/services/articleService";
 import { useRouter } from "next/router";
+import { buildLegacyNewsRedirect, isLegacyPublicNewsQuery } from "@/lib/newsQuery";
 
 type NewsRow = ArticleRow & { slug?: string };
 
@@ -570,3 +572,16 @@ function ManageNews() {
 
 ManageNews.Layout = AdminLayout;
 export default ManageNews;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  if (isLegacyPublicNewsQuery(context.query)) {
+    return {
+      redirect: {
+        destination: buildLegacyNewsRedirect(context.query),
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
+};

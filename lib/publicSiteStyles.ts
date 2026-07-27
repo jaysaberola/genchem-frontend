@@ -22,6 +22,7 @@ export const PUBLIC_LOCAL_STYLESHEETS = [
   "/css/genchemph-products.css?v=15",
   "/css/genchemph-home-intro.css?v=10",
   "/css/genchemph-contact-us.css?v=5",
+  "/css/genchemph-news.css?v=2",
   "/css/cms-footer.css?v=8",
 ] as const;
 

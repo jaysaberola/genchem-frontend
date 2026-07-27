@@ -5,6 +5,7 @@ import SearchIcon from "../icons/search";
 type Props = {
   categories: any[];
   archive: Record<string, { month: number; total: number }[]>;
+  activeCategoryId?: number | "all" | "uncategorized";
 };
 
 const MONTHS = [
@@ -12,96 +13,160 @@ const MONTHS = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-export default function LeftSidebar({ categories, archive }: Props) {
+export default function LeftSidebar({ categories, archive, activeCategoryId }: Props) {
   const router = useRouter();
   const [search, setSearch] = useState(
     (router.query.search as string) || ""
   );
-  const [openYears, setOpenYears] = useState<Record<string, boolean>>({});
 
-  const pushQuery = (params: any) => {
+  const pushQuery = (params: Record<string, string | number | null | undefined>) => {
+    const nextQuery = { ...router.query, ...params };
+
+    Object.keys(nextQuery).forEach((key) => {
+      const value = nextQuery[key];
+      if (value === null || value === undefined || value === "") {
+        delete nextQuery[key];
+      }
+    });
+
+    delete nextQuery.type;
+    delete nextQuery.criteria;
+
     router.push({
       pathname: "/public/news",
-      query: {
-        ...router.query,
-        ...params,
-      },
+      query: nextQuery,
     });
   };
 
-  const toggleYear = (year: string) => {
-    setOpenYears((prev) => ({
-      ...prev,
-      [year]: !prev[year],
-    }));
+  const isCategoryActive = (category: any) => {
+    if (activeCategoryId === "uncategorized") {
+      return category.id === 0 || category.slug === "uncategorized";
+    }
+    if (typeof activeCategoryId === "number") {
+      return category.id === activeCategoryId;
+    }
+    return false;
   };
 
   return (
     <>
-      {/* SEARCH */}
-      <div className="search-sidebar2 size12 bo2 pos-relative">
+      <div className="genchem-news-search">
         <input
-          className="input-search-sidebar2 txt10 p-l-20 p-r-55"
           type="text"
-          placeholder="Search"
+          placeholder="Search news"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && pushQuery({ search })}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              pushQuery({
+                search,
+                category: null,
+                category_id: null,
+                year: null,
+                month: null,
+              });
+            }
+          }}
         />
         <button
-          className="btn-search-sidebar2 flex-c-m ti-search trans-0-4"
-          onClick={() => pushQuery({ search })}>
-            <SearchIcon />
+          type="button"
+          aria-label="Search news"
+          onClick={() =>
+            pushQuery({
+              search,
+              category: null,
+              category_id: null,
+              year: null,
+              month: null,
+            })
+          }
+        >
+          <SearchIcon />
         </button>
       </div>
 
-      {/* CATEGORIES */}
       {categories.length > 0 && (
-        <div className="categories">
-          <h4 className="txt33 bo5-b p-b-35 p-t-58">
-            Categories
-          </h4>
-
-          <ul>
+        <div className="genchem-news-sidebar-section">
+          <h4 className="genchem-news-sidebar-title">Categories</h4>
+          <ul className="genchem-news-sidebar-list">
+            <li className="genchem-news-sidebar-item">
+              <button
+                type="button"
+                className={`genchem-news-sidebar-link${activeCategoryId === "all" ? " active" : ""}`}
+                onClick={() =>
+                  pushQuery({
+                    search: null,
+                    category: null,
+                    category_id: null,
+                    year: null,
+                    month: null,
+                  })
+                }
+              >
+                <span>All News</span>
+              </button>
+            </li>
             {categories.map((cat) => (
-              <li key={cat.id} className="bo5-b p-t-8 p-b-8">
-                <a
-                  className="txt27"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => pushQuery({ category: cat.slug })}
+              <li key={cat.id} className="genchem-news-sidebar-item">
+                <button
+                  type="button"
+                  className={`genchem-news-sidebar-link${isCategoryActive(cat) ? " active" : ""}`}
+                  onClick={() =>
+                    pushQuery(
+                      cat.id === 0
+                        ? {
+                            search: null,
+                            category: null,
+                            category_id: 0,
+                            year: null,
+                            month: null,
+                          }
+                        : {
+                            search: null,
+                            category: cat.slug,
+                            category_id: null,
+                            year: null,
+                            month: null,
+                          }
+                    )
+                  }
                 >
-                  {cat.name}
-                </a>
+                  <span>{cat.name}</span>
+                  {typeof cat.articles_count === "number" ? (
+                    <span className="genchem-news-tab-count">{cat.articles_count}</span>
+                  ) : null}
+                </button>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* ARCHIVE */}
       {Object.keys(archive).length > 0 && (
-        <div className="archive">
-          <h4 className="txt33 p-b-20 p-t-43">
-            Archive
-          </h4>
-
-          <ul>
+        <div className="genchem-news-sidebar-section">
+          <h4 className="genchem-news-sidebar-title">Archive</h4>
+          <ul className="genchem-news-sidebar-list">
             {Object.entries(archive).map(([year, months]) =>
               months.map((m) => (
-                <li key={`${year}-${m.month}`} className="flex-sb-m p-t-8 p-b-8">
-                  <a
-                    className="txt27"
-                    style={{ cursor: "pointer" }}
+                <li key={`${year}-${m.month}`} className="genchem-news-sidebar-item">
+                  <button
+                    type="button"
+                    className="genchem-news-sidebar-link"
                     onClick={() =>
-                      pushQuery({ year, month: m.month })
+                      pushQuery({
+                        search: null,
+                        category: null,
+                        category_id: null,
+                        year,
+                        month: m.month,
+                      })
                     }
                   >
-                    {MONTHS[m.month]} {year}
-                  </a>
-
-                  <span className="txt29">
-                    ({m.total})
-                  </span>
+                    <span>
+                      {MONTHS[m.month]} {year}
+                    </span>
+                    <span className="genchem-news-tab-count">{m.total}</span>
+                  </button>
                 </li>
               ))
             )}

@@ -100,11 +100,23 @@ function ManageNewsCategories() {
       sortable: true,
       sortField: "slug",
       defaultSortOrder: "asc",
-      render: (row) => (
-        <span className="text-muted small">
-          /news/{row.slug}
-        </span>
-      ),
+      render: (row) => {
+        const href =
+          row.id === 0
+            ? "/public/news?category_id=0"
+            : `/public/news?category=${encodeURIComponent(row.slug)}`;
+
+        return (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted small text-decoration-none"
+          >
+            {href}
+          </a>
+        );
+      },
     },
     {
       key: "articles_count",
