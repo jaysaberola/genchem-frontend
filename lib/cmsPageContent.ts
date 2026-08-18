@@ -421,8 +421,9 @@ export function rewriteCmsAssetUrls(html: string): string {
     .replace(/src="\/images\/genchemph\//g, 'src="/images/genchemph/')
     .replace(/src='\/images\/genchemph\//g, "src='/images/genchemph/")
     .replace(/src='images\//g, "src='/images/genchemph/")
-    .replace(/src="images\/video\.mp4"/g, 'src="/images/genchemph/video.mp4"')
-    .replace(/src='images\/video\.mp4'/g, "src='/images/genchemph/video.mp4'");
+    .replace(/src="images\/video\.mp4"/g, 'src="/images/genchemph/genchem_video.mp4?v=20260818"')
+    .replace(/src='images\/video\.mp4'/g, "src='/images/genchemph/genchem_video.mp4?v=20260818'")
+    .replace(/\/images\/genchemph\/video\.mp4/g, "/images/genchemph/genchem_video.mp4?v=20260818");
 
   return output;
 }
