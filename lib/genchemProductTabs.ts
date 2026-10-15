@@ -37,7 +37,7 @@ export function normalizeProductTabHash(hash: string): GenchemProductTabSlug | n
 
 export function productTabHref(tabIndex: number): string {
   const slug = getProductTabSlug(tabIndex);
-  return slug ? `/public/products#${slug}` : "/public/products";
+  return slug ? `/products#${slug}` : "/products";
 }
 
 export function parseProductTabFromHref(href: string): number | null {

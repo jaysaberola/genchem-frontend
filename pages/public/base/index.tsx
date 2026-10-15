@@ -289,7 +289,7 @@ export default function Base({ pageData, news, products = [] }: LandingPageLayou
                             <p className="txt14">No featured products available.</p>
                         )}
                     </div>
-                    <a href="/public/products" className="btn btn-danger text-white fw-light fs-6 mt-5">See More..</a>
+                    <a href="/products" className="btn btn-danger text-white fw-light fs-6 mt-5">See More..</a>
                 </div>
                 
             </div>
@@ -480,7 +480,7 @@ export default function Base({ pageData, news, products = [] }: LandingPageLayou
             </div>
 
             <div className="w-100 my-5 py-5 cutter-section" style={{background: "linear-gradient(90deg, #FF0000, #FF4500, #FFA500);"}}>
-                <h5 className="text-white text-center fs-2">We offer the best PVC solutions in the market. See our <b><a href="/public/products" className="text-white fw-bold fs-3">Product List</a></b></h5>
+                <h5 className="text-white text-center fs-2">We offer the best PVC solutions in the market. See our <b><a href="/products" className="text-white fw-bold fs-3">Product List</a></b></h5>
             </div>
 
         </div>

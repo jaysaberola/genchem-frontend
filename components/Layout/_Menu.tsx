@@ -4,25 +4,7 @@ import { getActiveMenu, PublicMenu, PublicMenuItem } from "@/services/publicPage
 import { GENCHEM_FALLBACK_MENU_ITEMS } from "@/lib/genchemDefaultMenu";
 import { GENCHEM_PRODUCT_TABS } from "@/lib/genchemProductTabs";
 import MenuItem from "./_MenuItem";
-
-function rewritePublicHome(target: string): string {
-  if (!target) return target;
-
-  try {
-    const url = new URL(target, "http://local");
-    const pathname = url.pathname.replace(/\/$/, "") || "/";
-    if (pathname !== "/public/home") return target;
-
-    if (/^https?:\/\//i.test(target)) {
-      url.pathname = "/";
-      return url.toString();
-    }
-
-    return `/${url.search}${url.hash}`;
-  } catch {
-    return target;
-  }
-}
+import { toPublicHref } from "@/lib/publicPagePath";
 
 function normalizeMenuItems(items: PublicMenuItem[] | undefined): PublicMenuItem[] {
   if (!items?.length) return GENCHEM_FALLBACK_MENU_ITEMS;
@@ -30,10 +12,10 @@ function normalizeMenuItems(items: PublicMenuItem[] | undefined): PublicMenuItem
   return items.map((item) => {
     const rewritten: PublicMenuItem = {
       ...item,
-      target: rewritePublicHome(item.target),
+      target: toPublicHref(item.target),
       children: item.children?.map((child) => ({
         ...child,
-        target: rewritePublicHome(child.target),
+        target: toPublicHref(child.target),
       })),
     };
 
@@ -50,7 +32,7 @@ function normalizeMenuItems(items: PublicMenuItem[] | undefined): PublicMenuItem
                 ? "PVC Resins"
                 : "PVC Stabilizers"
               : child.label,
-          target: `/public/products#${GENCHEM_PRODUCT_TABS[index]?.slug ?? (index === 0 ? "pvc-resins" : "pvc-stabilizers")}`,
+          target: `/products#${GENCHEM_PRODUCT_TABS[index]?.slug ?? (index === 0 ? "pvc-resins" : "pvc-stabilizers")}`,
         }))
       : GENCHEM_FALLBACK_MENU_ITEMS.find((m) => m.label === "Products")?.children ?? [];
 

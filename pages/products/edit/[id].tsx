@@ -148,7 +148,7 @@ export default function EditProduct() {
         resp = await svc.updateProduct(id as string, payload);
       }
       toast.success(resp?.message ?? "Product updated");
-      router.push("/products");
+      router.push("/products/manage");
     } catch (e: any) {
       console.error("Update product error", e);
       toast.error(e?.response?.data?.message || e?.message || "Failed to update product");
@@ -163,7 +163,7 @@ export default function EditProduct() {
       const svc = await import("@/services/productService");
       await svc.deleteProduct(id as string);
       toast.success("Product deleted");
-      router.push("/products");
+      router.push("/products/manage");
     } catch (e: any) {
       console.error("Delete error", e);
       toast.error(e?.response?.data?.message || e?.message || "Failed to delete product");
@@ -177,7 +177,7 @@ export default function EditProduct() {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>Edit Product</h3>
         <div>
-          <Link href="/products" className="btn btn-outline-secondary">Back to Manage</Link>
+          <Link href="/products/manage" className="btn btn-outline-secondary">Back to Manage</Link>
         </div>
       </div>
 

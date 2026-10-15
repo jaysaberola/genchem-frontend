@@ -365,7 +365,7 @@ export default function CreateProductCategory() {
       }
 
       toast.success("Brand created");
-      router.push("/products");
+      router.push("/products/manage");
     } catch (e: any) {
       console.error("Create brand error", e);
       toast.error(e?.response?.data?.message || e?.message || "Failed to create brand");

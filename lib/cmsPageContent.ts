@@ -2,6 +2,7 @@ import type { PublicPage } from "@/services/publicPageService";
 import { fixCmsDroneVideos } from "@/lib/genchemMedia";
 import { patchHomeTrustBar } from "@/lib/genchemTrustBar";
 import { GENCHEM_PRODUCT_TABS } from "@/lib/genchemProductTabs";
+import { toPublicHref } from "@/lib/publicPagePath";
 
 export { patchHomeTrustBar } from "@/lib/genchemTrustBar";
 
@@ -139,8 +140,8 @@ export function patchProductsPageHtml(html: string): string {
   for (const tab of GENCHEM_PRODUCT_TABS) {
     const legacyId = `tab-${tab.index}`;
     output = output.replaceAll(`data-bs-target="#${legacyId}"`, `data-bs-target="#${tab.slug}"`);
-    output = output.replaceAll(`href="/public/products#${legacyId}"`, `href="/public/products#${tab.slug}"`);
-    output = output.replaceAll(`href="products.html#${legacyId}"`, `href="/public/products#${tab.slug}"`);
+    output = output.replaceAll(`href="/public/products#${legacyId}"`, `href="/products#${tab.slug}"`);
+    output = output.replaceAll(`href="products.html#${legacyId}"`, `href="/products#${tab.slug}"`);
 
     if (output.includes(`id="${legacyId}"`)) {
       output = output.replaceAll(`id="${legacyId}"`, `id="${tab.slug}" data-genchem-tab="${tab.slug}"`);
@@ -368,12 +369,13 @@ export function rewriteCmsAssetUrls(html: string): string {
     "contact_us.png",
   ]);
 
-  let output = html
-    .replaceAll('href="/public/home"', 'href="/"')
-    .replaceAll("href='/public/home'", "href='/'")
-    .replaceAll('href="/public/home/"', 'href="/"')
-    .replaceAll("href='/public/home/'", "href='/'")
-    .replaceAll(`${frontendBase}/public/home`, `${frontendBase}/`);
+  let output = html.replace(
+    /href=(["'])([^"']+)\1/g,
+    (match, quote: string, href: string) => {
+      const next = toPublicHref(href);
+      return next === href ? match : `href=${quote}${next}${quote}`;
+    },
+  );
   for (const [wrong, right] of Object.entries(productImageFixes)) {
     output = output.replaceAll(wrong, right);
     output = output.replaceAll(`/images/${wrong}`, `/images/genchemph/products/${right}`);

@@ -286,7 +286,7 @@ export default function ManageProducts() {
         {showPublicPreview && (
           <div className="card mb-3">
             <div className="card-body" style={{ padding: 0 }}>
-              <iframe src="/public/products" style={{ width: '100%', height: 600, border: 0 }} title="Public products preview" />
+              <iframe src="/products" style={{ width: '100%', height: 600, border: 0 }} title="Public products preview" />
             </div>
           </div>
         )}

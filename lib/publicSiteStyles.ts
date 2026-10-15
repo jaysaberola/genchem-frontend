@@ -42,12 +42,27 @@ const ADMIN_ROUTE_PREFIXES = [
   "/users",
 ] as const;
 
+const AUTH_PATHS = ["/login", "/forgot-password", "/reset-password"];
+
 export function isPublicSiteRoute(pathname: string): boolean {
   return pathname === "/" || pathname.startsWith("/public");
 }
 
 export function isAdminRoute(pathname: string): boolean {
-  return ADMIN_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  if (pathname === "/products") return false;
+  return ADMIN_ROUTE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
+/** Browser URL for the public site, including paths that no longer use /public. */
+export function isPublicBrowserPath(pathname: string): boolean {
+  if (!pathname) return false;
+  if (pathname === "/" || pathname.startsWith("/public")) return true;
+  if (AUTH_PATHS.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) {
+    return false;
+  }
+  return !isAdminRoute(pathname);
 }
 
 export function getPublicSiteStylesheets(): string[] {

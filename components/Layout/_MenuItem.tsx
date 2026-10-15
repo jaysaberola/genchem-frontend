@@ -25,7 +25,8 @@ function isProductTabLinkActive(childTarget: string, currentPath: string): boole
     return normalizePath(currentPath) === normalizePath(childTarget);
   }
 
-  if (normalizePath(currentPath) !== "/public/products") return false;
+  const productsPath = normalizePath(currentPath).replace(/\/$/, "") || "/";
+  if (productsPath !== "/products" && productsPath !== "/public/products") return false;
 
   const hashPart = currentPath.includes("#") ? currentPath.slice(currentPath.indexOf("#")) : "";
   const activeSlug = normalizeProductTabHash(hashPart);

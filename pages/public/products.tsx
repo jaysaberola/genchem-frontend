@@ -64,7 +64,7 @@ export default function ProductsPage({ pageData }: ProductsPageProps) {
     window.addEventListener("hashchange", onHashChange);
 
     const onRouteComplete = (url: string) => {
-      if (url.includes("/public/products") && url.includes("#")) {
+      if ((url.startsWith("/products") || url.includes("/public/products")) && url.includes("#")) {
         scheduleTabFromHash();
         scheduleProductCards();
       }

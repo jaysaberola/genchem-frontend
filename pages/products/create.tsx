@@ -97,7 +97,7 @@ export default function CreateProduct() {
         return;
       }
       toast.success(resp?.message ?? "Product created");
-      router.push("/products");
+      router.push("/products/manage");
     } catch (e: any) {
       console.error("Create product error", e);
       const resp = e?.response?.data ?? e?.response;
