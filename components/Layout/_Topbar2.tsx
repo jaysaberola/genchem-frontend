@@ -80,7 +80,7 @@ export default function Topbar({ onToggleSidebar, sidebarToggleRef }: TopbarProp
 
   const handleLogout = () => {
     setShowLogoutConfirm(false);
-    router.push("/");
+    router.push("/login");
   };
 
   return (

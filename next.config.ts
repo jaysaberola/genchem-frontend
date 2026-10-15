@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	async redirects() {
+		return [
+			{
+				source: "/public/home",
+				destination: "/",
+				permanent: false,
+			},
+		];
+	},
 	devIndicators: false,
   eslint: {
     ignoreDuringBuilds: true,

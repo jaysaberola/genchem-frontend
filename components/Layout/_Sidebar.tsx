@@ -182,7 +182,7 @@ export default function Sidebar({ isOpen, isMobile, onClose, width }: SidebarPro
 
       <div className="mb-4">
         <Link
-          href="/public/home"
+          href="/"
           target="_blank"
           rel="noopener noreferrer"
           className="nav-link text-white p-0 text-decoration-none d-flex align-items-center justify-content-center gap-2 fw-semibold"

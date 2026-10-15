@@ -43,7 +43,7 @@ const ADMIN_ROUTE_PREFIXES = [
 ] as const;
 
 export function isPublicSiteRoute(pathname: string): boolean {
-  return pathname.startsWith("/public");
+  return pathname === "/" || pathname.startsWith("/public");
 }
 
 export function isAdminRoute(pathname: string): boolean {

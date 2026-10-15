@@ -17,7 +17,8 @@ const axiosInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.request.use((config) => {
   const skipLoading =
     config.headers?.["X-No-Loading"] ||
-    (typeof window !== "undefined" && window.location.pathname.startsWith("/public"));
+    (typeof window !== "undefined" &&
+      (window.location.pathname === "/" || window.location.pathname.startsWith("/public")));
 
   if (!skipLoading) {
     loading.start();
@@ -46,11 +47,11 @@ axiosInstance.interceptors.response.use(
         const headerVal: any = (error.config as any)?.headers?.["X-No-Auth-Redirect"] ?? (error.config as any)?.headers?.["x-no-auth-redirect"];
         const noRedirect = headerVal === true || headerVal === "true" || headerVal === 1 || headerVal === "1";
         const path = window.location?.pathname || "";
-        const isPublicPage = path.startsWith("/public");
+        const isPublicPage = path === "/" || path.startsWith("/public");
 
         if (!noRedirect && !isPublicPage) {
           localStorage.removeItem("auth_token");
-          window.location.href = "/";
+          window.location.href = "/login";
         }
       }
     }

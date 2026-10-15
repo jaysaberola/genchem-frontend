@@ -221,7 +221,7 @@ export default function LandingTopbar({ overlayHero = true }: { overlayHero?: bo
 
             <div id="logo" className="me-lg-2 gemchem-logo">
 
-              <Link href="/public/home">
+              <Link href="/">
 
                 <BrandLogo
 

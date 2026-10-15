@@ -14,6 +14,11 @@ function normalizePath(url: string): string {
   }
 }
 
+function isHomePath(path: string): boolean {
+  const normalized = normalizePath(path).replace(/\/$/, "") || "/";
+  return normalized === "/" || normalized === "/public/home";
+}
+
 function isProductTabLinkActive(childTarget: string, currentPath: string): boolean {
   const tabNumber = parseProductTabFromHref(childTarget);
   if (tabNumber == null) {
@@ -54,7 +59,7 @@ export default function MenuItem({
     return () => media.removeEventListener("change", sync);
   }, []);
 
-  const href = item.target;
+  const href = isHomePath(item.target) ? "/" : item.target;
   const isInternal = item.type === "page";
   const hasChildren = item.children && item.children.length > 0;
   const useMobileSubmenu = isMobile && isMobileViewport && hasChildren;
@@ -62,7 +67,9 @@ export default function MenuItem({
   const hrefPath = normalizePath(href);
   const isCurrent =
     isInternal &&
-    (currentPath === hrefPath || currentPath.startsWith(hrefPath + "/"));
+    (isHomePath(href)
+      ? isHomePath(currentPath)
+      : currentPath === hrefPath || (hrefPath !== "/" && currentPath.startsWith(hrefPath + "/")));
 
   const isChildCurrent = hasChildren && normalizePath(currentPath) === normalizePath(href);
 

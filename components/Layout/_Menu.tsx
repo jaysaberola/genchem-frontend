@@ -5,11 +5,41 @@ import { GENCHEM_FALLBACK_MENU_ITEMS } from "@/lib/genchemDefaultMenu";
 import { GENCHEM_PRODUCT_TABS } from "@/lib/genchemProductTabs";
 import MenuItem from "./_MenuItem";
 
+function rewritePublicHome(target: string): string {
+  if (!target) return target;
+
+  try {
+    const url = new URL(target, "http://local");
+    const pathname = url.pathname.replace(/\/$/, "") || "/";
+    if (pathname !== "/public/home") return target;
+
+    if (/^https?:\/\//i.test(target)) {
+      url.pathname = "/";
+      return url.toString();
+    }
+
+    return `/${url.search}${url.hash}`;
+  } catch {
+    return target;
+  }
+}
+
 function normalizeMenuItems(items: PublicMenuItem[] | undefined): PublicMenuItem[] {
   if (!items?.length) return GENCHEM_FALLBACK_MENU_ITEMS;
 
   return items.map((item) => {
-    if (item.label !== "Products") return item;
+    const rewritten: PublicMenuItem = {
+      ...item,
+      target: rewritePublicHome(item.target),
+      children: item.children?.map((child) => ({
+        ...child,
+        target: rewritePublicHome(child.target),
+      })),
+    };
+
+    if (rewritten.label !== "Products") return rewritten;
+
+    item = rewritten;
 
     const children = item.children?.length
       ? item.children.map((child, index) => ({
@@ -24,7 +54,7 @@ function normalizeMenuItems(items: PublicMenuItem[] | undefined): PublicMenuItem
         }))
       : GENCHEM_FALLBACK_MENU_ITEMS.find((m) => m.label === "Products")?.children ?? [];
 
-    return { ...item, children };
+    return { ...rewritten, children };
   });
 }
 

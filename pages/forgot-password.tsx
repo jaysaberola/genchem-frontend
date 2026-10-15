@@ -41,7 +41,7 @@ function ForgotPasswordPage() {
             Send Password Reset Link
           </button>
 
-          <a href="/" className="btn btn-outline-secondary">
+          <a href="/login" className="btn btn-outline-secondary">
             Cancel
           </a>
         </div>

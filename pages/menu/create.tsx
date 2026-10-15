@@ -9,6 +9,7 @@ import StructurePanel from "@/components/MenuBuilder/StructurePanel";
 import CustomUrlPanel from "@/components/MenuBuilder/CustomUrlPanel";
 import { Page, MenuItem, FlatItem } from "@/components/MenuBuilder/types";
 import { toast } from "@/lib/toast";
+import { publicPagePath } from "@/lib/publicPagePath";
 import {
   flattenTree,
   buildTree,
@@ -59,7 +60,7 @@ function CreateMenu() {
         id: p.id,
         label: p.title,
         type: "page",
-        target: `${FRONTEND_URL}/public/${p.slug}`,
+        target: `${FRONTEND_URL}${publicPagePath(p.slug)}`,
         children: [],
       }));
 

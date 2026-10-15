@@ -7,7 +7,7 @@ export const GENCHEM_FALLBACK_MENU_ITEMS: PublicMenuItem[] = [
     id: 1,
     label: "Home",
     type: "page",
-    target: "/public/home",
+    target: "/",
     children: [],
   },
   {

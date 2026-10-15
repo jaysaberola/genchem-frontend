@@ -1038,7 +1038,7 @@ function HomeBanner() {
         <div className="card mb-4">
           <div className="card-body" style={{ padding: 0 }}>
             <iframe
-              src="/public/home"
+              src="/"
               style={{ width: "100%", height: 650, border: 0 }}
               title="Public homepage preview"
             />

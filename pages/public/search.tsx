@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { searchSite, SearchSiteResponse } from "@/services/searchService";
+import { publicPagePath } from "@/lib/publicPagePath";
 
 export default function PublicSearchPage() {
   const router = useRouter();
@@ -65,7 +66,7 @@ export default function PublicSearchPage() {
                 ) : (
                   <ul className="list-group">
                     {results.pages.map((p) => {
-                      const href = p.url || (p.slug ? `/public/${p.slug}` : "#");
+                      const href = p.url || (p.slug ? publicPagePath(p.slug) : "#");
                       const fullHref = href.startsWith("http") || !origin ? href : `${origin}${href.startsWith("/") ? "" : "/"}${href}`;
                       return (
                         <li key={p.id ?? p.slug} className="list-group-item">

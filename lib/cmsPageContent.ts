@@ -368,7 +368,12 @@ export function rewriteCmsAssetUrls(html: string): string {
     "contact_us.png",
   ]);
 
-  let output = html;
+  let output = html
+    .replaceAll('href="/public/home"', 'href="/"')
+    .replaceAll("href='/public/home'", "href='/'")
+    .replaceAll('href="/public/home/"', 'href="/"')
+    .replaceAll("href='/public/home/'", "href='/'")
+    .replaceAll(`${frontendBase}/public/home`, `${frontendBase}/`);
   for (const [wrong, right] of Object.entries(productImageFixes)) {
     output = output.replaceAll(wrong, right);
     output = output.replaceAll(`/images/${wrong}`, `/images/genchemph/products/${right}`);

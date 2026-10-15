@@ -6,6 +6,7 @@ import { getPages, getPageById, restorePage, deletePage, postDeletePage, postMet
 import ConfirmModal from "@/components/UI/ConfirmModal";
 import { toast } from "@/lib/toast";
 import { useRouter } from "next/router";
+import { publicPagePath } from "@/lib/publicPagePath";
 
 interface PageRow {
   id: number;
@@ -482,7 +483,7 @@ export default function ManagePages() {
             </div>
           ) : (
             <a
-              href={`/public/${row.slug}`}
+              href={publicPagePath(row.slug)}
               target="_blank"
               rel="noreferrer"
               className="text-primary fw-bold"
@@ -492,7 +493,7 @@ export default function ManagePages() {
           )}
 
           <div style={{ fontSize: "0.8rem", color: "#6c757d" }}>
-            {FRONTEND_URL}/public/{row.slug}
+            {FRONTEND_URL}{publicPagePath(row.slug)}
           </div>
         </div>
       ),
@@ -525,7 +526,7 @@ export default function ManagePages() {
               {/* View */}
               <button
                 className="btn btn-link p-0 me-2 text-secondary"
-                onClick={() => window.open(`/public/${row.slug}`, "_blank")}
+                onClick={() => window.open(publicPagePath(row.slug), "_blank")}
                 title="View"
               >
                 <i className="fas fa-eye"></i>
