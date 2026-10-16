@@ -1,3 +1,13 @@
+/** CMS uploads (Laravel file manager) — proxied via `/file-manager/*` on the public site. */
+export function toProxiedFileManagerPath(path?: string | null): string | undefined {
+  if (path == null) return undefined;
+  const raw = path.toString().trim().replace(/\\/g, "/");
+  if (!raw) return undefined;
+
+  const match = raw.match(/^(?:https?:\/\/[^/]+)?(?:\/public)?(\/file-manager\/[^?\s#"']+)/i);
+  return match?.[1];
+}
+
 /** Paths served from Next.js `public/images/genchemph/` (not the Laravel API). */
 export function toGenchemphStaticPath(path?: string | null): string | undefined {
   if (path == null) return undefined;

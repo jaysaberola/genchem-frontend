@@ -35,12 +35,23 @@ const nextConfig: NextConfig = {
 		const cmsApiRewrites = apiOrigin
 			? [{ source: "/cms-api/:path*", destination: `${apiOrigin}/api/:path*` }]
 			: [];
+		const cmsUploadRewrites = apiOrigin
+			? [
+					{
+						source: "/public/file-manager/:path*",
+						destination: `${apiOrigin}/file-manager/:path*`,
+					},
+					{ source: "/file-manager/:path*", destination: `${apiOrigin}/file-manager/:path*` },
+					{ source: "/storage/:path*", destination: `${apiOrigin}/storage/:path*` },
+				]
+			: [];
 
 		return {
 			// Public news listing at `/news` (must run before `pages/news/index.tsx`).
 			beforeFiles: [{ source: "/news", destination: "/public/news" }],
 			afterFiles: [
 				...cmsApiRewrites,
+				...cmsUploadRewrites,
 				{ source: "/news/:slug", destination: "/public/news/:slug" },
 				{ source: "/:slug", destination: "/public/:slug" },
 				{ source: "/product/:slug", destination: "/public/product/:slug" },

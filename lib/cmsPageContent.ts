@@ -3,7 +3,7 @@ import { fixCmsDroneVideos } from "@/lib/genchemMedia";
 import { patchHomeTrustBar } from "@/lib/genchemTrustBar";
 import { GENCHEM_PRODUCT_TABS } from "@/lib/genchemProductTabs";
 import { normalizeApiOrigin } from "@/lib/apiBaseUrl";
-import { toGenchemphStaticPath } from "@/lib/genchemStaticAssets";
+import { toGenchemphStaticPath, toProxiedFileManagerPath } from "@/lib/genchemStaticAssets";
 import { toPublicHref } from "@/lib/publicPagePath";
 
 export { patchHomeTrustBar } from "@/lib/genchemTrustBar";
@@ -382,9 +382,13 @@ export function rewriteCmsAssetUrls(html: string): string {
   output = output.replace(
     /(?:src|poster)=(["'])([^"']+)\1/gi,
     (match, quote: string, value: string) => {
+      const attr = match.trimStart().toLowerCase().startsWith("poster") ? "poster" : "src";
+      const fileManagerPath = toProxiedFileManagerPath(value);
+      if (fileManagerPath) {
+        return `${attr}=${quote}${fileManagerPath}${quote}`;
+      }
       const staticPath = toGenchemphStaticPath(value);
       if (staticPath) {
-        const attr = match.trimStart().toLowerCase().startsWith("poster") ? "poster" : "src";
         return `${attr}=${quote}${staticPath}${quote}`;
       }
       return match;
@@ -396,6 +400,8 @@ export function rewriteCmsAssetUrls(html: string): string {
     /https?:\/\/(?:beta(?:-genchemph)?\.genchemph\.com|login\.genchemph\.com|www\.genchemph\.com|genchemph\.com)([^"'\s>]*)/gi,
     (_match, pathPart: string) => {
       const path = (pathPart || "/").replace(/^\/public(?=\/)/i, "");
+      const fileManagerPath = toProxiedFileManagerPath(path);
+      if (fileManagerPath) return fileManagerPath;
       const staticPath = toGenchemphStaticPath(path);
       if (staticPath) return staticPath;
       const rel = toPublicHref(path.startsWith("/") ? path : `/${path}`);
