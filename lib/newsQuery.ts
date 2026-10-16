@@ -1,3 +1,20 @@
+/** Public news listing (matches CMS preview links and `FrontendUrlHelper`). */
+export const PUBLIC_NEWS_LIST_PATH = "/news";
+
+export function publicNewsListHref(queryParams?: Record<string, string | number | undefined>): string {
+  if (!queryParams || Object.keys(queryParams).length === 0) {
+    return PUBLIC_NEWS_LIST_PATH;
+  }
+  const params = new URLSearchParams();
+  Object.entries(queryParams).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.set(key, String(value));
+    }
+  });
+  const qs = params.toString();
+  return qs ? `${PUBLIC_NEWS_LIST_PATH}?${qs}` : PUBLIC_NEWS_LIST_PATH;
+}
+
 export type NewsFilterQuery = {
   search?: string | null;
   category?: string | null;
@@ -133,5 +150,5 @@ export function buildLegacyNewsRedirect(query: Record<string, string | string[] 
   });
 
   const qs = params.toString();
-  return qs ? `/public/news?${qs}` : "/public/news";
+  return qs ? `${PUBLIC_NEWS_LIST_PATH}?${qs}` : PUBLIC_NEWS_LIST_PATH;
 }

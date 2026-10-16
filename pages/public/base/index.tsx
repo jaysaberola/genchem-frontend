@@ -133,7 +133,7 @@ function Slider({ slides }: { slides: Slide[] }) {
                     <h3 className="fs-3 fw-bold">{slides[index].title}</h3>
                     <p className="fs-6 text-secondary">{slides[index].desc}</p>
                     <div>
-                        <a href="/public/news" className="btn btn-danger mt-4 w-20">Learn More</a>
+                        <a href="/news" className="btn btn-danger mt-4 w-20">Learn More</a>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@ import type { PublicPage } from "@/services/publicPageService";
 import { fixCmsDroneVideos } from "@/lib/genchemMedia";
 import { patchHomeTrustBar } from "@/lib/genchemTrustBar";
 import { GENCHEM_PRODUCT_TABS } from "@/lib/genchemProductTabs";
+import { normalizeApiOrigin } from "@/lib/apiBaseUrl";
 import { toGenchemphStaticPath } from "@/lib/genchemStaticAssets";
 import { toPublicHref } from "@/lib/publicPagePath";
 
@@ -345,7 +346,7 @@ export function sanitizeCmsPageContent(html: string): string {
 export function rewriteCmsAssetUrls(html: string): string {
   if (!html) return html;
 
-  const apiBase = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+  const apiBase = normalizeApiOrigin();
   const frontendBase = (process.env.NEXT_PUBLIC_FRONTEND_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 
   const productImageFixes: Record<string, string> = {
@@ -390,18 +391,22 @@ export function rewriteCmsAssetUrls(html: string): string {
     },
   );
 
-  // Legacy staging host saved in CMS HTML/menus
+  // Legacy staging / CMS hosts saved in HTML (beta, login, www with /public prefix)
   output = output.replace(
-    /https?:\/\/beta\.genchemph\.com([^"'\s>]*)/gi,
+    /https?:\/\/(?:beta(?:-genchemph)?\.genchemph\.com|login\.genchemph\.com|www\.genchemph\.com|genchemph\.com)([^"'\s>]*)/gi,
     (_match, pathPart: string) => {
-      const path = pathPart || "/";
-      const rel = toPublicHref(`http://local${path.startsWith("/") ? path : `/${path}`}`);
-      const base = frontendBase.replace(/\/$/, "");
-      if (rel.startsWith("/") && base) {
-        return `${base}${rel}`;
-      }
+      const path = (pathPart || "/").replace(/^\/public(?=\/)/i, "");
+      const staticPath = toGenchemphStaticPath(path);
+      if (staticPath) return staticPath;
+      const rel = toPublicHref(path.startsWith("/") ? path : `/${path}`);
+      if (rel.startsWith("/")) return rel;
       return rel;
     },
+  );
+
+  output = output.replace(
+    /https?:\/\/local(\/images\/genchemph\/[^"'\s>]+)/gi,
+    (_match, pathPart: string) => toGenchemphStaticPath(pathPart) ?? pathPart,
   );
   for (const [wrong, right] of Object.entries(productImageFixes)) {
     output = output.replaceAll(wrong, right);

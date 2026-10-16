@@ -1,9 +1,10 @@
+import { normalizeApiOrigin } from "@/lib/apiBaseUrl";
 import { toGenchemphStaticPath } from "@/lib/genchemStaticAssets";
 
 export const DEFAULT_LOGO_SRC = "/images/logos/genchemph-logo-transparent.png";
 
 function apiBase(): string {
-  return (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+  return normalizeApiOrigin();
 }
 
 /** Resolve logo/favicon/image paths from website settings or the file manager. */
@@ -20,6 +21,22 @@ export function resolveManagedAssetUrl(path?: string | null): string | undefined
   const base = apiBase();
 
   if (raw.startsWith("http://") || raw.startsWith("https://")) {
+    const staticPath = toGenchemphStaticPath(raw);
+    if (staticPath) return staticPath;
+
+    if (/^https?:\/\/local\b/i.test(raw)) {
+      const rel = raw.replace(/^https?:\/\/local/i, "");
+      const nested = toGenchemphStaticPath(rel);
+      if (nested) return nested;
+      if (rel.startsWith("/images/genchemph/")) return rel;
+    }
+
+    if (base && raw.startsWith(base)) {
+      const tail = raw.slice(base.length);
+      const nested = toGenchemphStaticPath(tail);
+      if (nested) return nested;
+    }
+
     return raw;
   }
 

@@ -25,7 +25,13 @@ export async function getPublicHomeProps() {
         };
     } catch (error) {
         console.error("Error fetching page data:", error);
-        return { notFound: true };
+        return {
+            props: {
+                pageData: null,
+                footerData: null,
+                layout: { fullWidth: true },
+            },
+        };
     }
 }
 

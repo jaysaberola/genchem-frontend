@@ -7,6 +7,7 @@ import NewsGrid from "@/components/News/NewsGrid";
 import {
   buildNewsCategoryTabs,
   getActiveCategoryId,
+  publicNewsListHref,
   resolveNewsFilterQuery,
 } from "@/lib/newsQuery";
 
@@ -91,7 +92,9 @@ export async function getServerSideProps({ query }: any) {
       const qs = params.toString();
       return {
         redirect: {
-          destination: qs ? `/public/news?${qs}` : "/public/news",
+          destination: publicNewsListHref(
+            Object.fromEntries(params.entries()) as Record<string, string>
+          ),
           permanent: false,
         },
       };

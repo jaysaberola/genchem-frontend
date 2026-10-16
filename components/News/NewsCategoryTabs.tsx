@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { publicNewsListHref } from "@/lib/newsQuery";
 
 export type NewsCategoryTab = {
   id: number | "all" | "uncategorized";
@@ -13,12 +14,14 @@ type Props = {
 };
 
 function buildHref(category: NewsCategoryTab): string {
-  if (category.id === "all") return "/public/news";
+  if (category.id === "all") return publicNewsListHref();
   if (category.id === "uncategorized") {
-    return "/public/news?category_id=0";
+    return publicNewsListHref({ category_id: 0 });
   }
-  if (category.slug) return `/public/news?category=${encodeURIComponent(category.slug)}`;
-  return `/public/news?category_id=${category.id}`;
+  if (category.slug) {
+    return publicNewsListHref({ category: category.slug });
+  }
+  return publicNewsListHref({ category_id: category.id as number });
 }
 
 function isActive(category: NewsCategoryTab, activeId?: number | "all" | "uncategorized") {

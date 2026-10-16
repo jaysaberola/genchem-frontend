@@ -1,11 +1,10 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { loading } from "@/plugins/loading";
 import { isPublicBrowserPath } from "@/lib/publicSiteStyles";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL + "/api";
+import { resolveAxiosBaseUrl } from "@/lib/apiBaseUrl";
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: resolveAxiosBaseUrl(),
   headers: {
     Accept: "application/json",
     "Cache-Control": "no-cache",

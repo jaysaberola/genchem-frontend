@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import SearchIcon from "../icons/search";
+import { PUBLIC_NEWS_LIST_PATH } from "@/lib/newsQuery";
 
 type Props = {
   categories: any[];
@@ -33,7 +34,7 @@ export default function LeftSidebar({ categories, archive, activeCategoryId }: P
     delete nextQuery.criteria;
 
     router.push({
-      pathname: "/public/news",
+      pathname: PUBLIC_NEWS_LIST_PATH,
       query: nextQuery,
     });
   };
