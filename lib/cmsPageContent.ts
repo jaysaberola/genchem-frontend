@@ -2,6 +2,7 @@ import type { PublicPage } from "@/services/publicPageService";
 import { fixCmsDroneVideos } from "@/lib/genchemMedia";
 import { patchHomeTrustBar } from "@/lib/genchemTrustBar";
 import { GENCHEM_PRODUCT_TABS } from "@/lib/genchemProductTabs";
+import { toGenchemphStaticPath } from "@/lib/genchemStaticAssets";
 import { toPublicHref } from "@/lib/publicPagePath";
 
 export { patchHomeTrustBar } from "@/lib/genchemTrustBar";
@@ -374,6 +375,18 @@ export function rewriteCmsAssetUrls(html: string): string {
     (match, quote: string, href: string) => {
       const next = toPublicHref(href);
       return next === href ? match : `href=${quote}${next}${quote}`;
+    },
+  );
+
+  output = output.replace(
+    /(?:src|poster)=(["'])([^"']+)\1/gi,
+    (match, quote: string, value: string) => {
+      const staticPath = toGenchemphStaticPath(value);
+      if (staticPath) {
+        const attr = match.trimStart().toLowerCase().startsWith("poster") ? "poster" : "src";
+        return `${attr}=${quote}${staticPath}${quote}`;
+      }
+      return match;
     },
   );
 

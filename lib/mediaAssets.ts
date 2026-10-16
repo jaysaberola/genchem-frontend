@@ -1,3 +1,5 @@
+import { toGenchemphStaticPath } from "@/lib/genchemStaticAssets";
+
 export const DEFAULT_LOGO_SRC = "/images/logos/genchemph-logo-transparent.png";
 
 function apiBase(): string {
@@ -9,11 +11,21 @@ export function resolveManagedAssetUrl(path?: string | null): string | undefined
   const raw = (path ?? "").toString().trim();
   if (!raw) return undefined;
 
+  const genchemStatic = toGenchemphStaticPath(raw);
+  if (genchemStatic) return genchemStatic;
+
   if (raw.startsWith("data:") || raw.startsWith("blob:")) return raw;
-  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
   if (raw.startsWith("//")) return `https:${raw}`;
 
   const base = apiBase();
+
+  if (raw.startsWith("http://") || raw.startsWith("https://")) {
+    return raw;
+  }
+
+  if (raw.startsWith("/images/genchemph/")) {
+    return raw;
+  }
 
   if (raw.startsWith("/images/") || raw.startsWith("/img/") || raw.startsWith("/icons/")) {
     return base ? `${base}${raw}` : raw;
