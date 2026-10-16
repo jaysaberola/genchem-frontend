@@ -1,3 +1,12 @@
+/** Next.js admin routes under `/news/*` (not public articles). */
+const ADMIN_NEWS_SEGMENTS = new Set([
+  "create",
+  "category_index",
+  "category_create",
+  "edit",
+  "index",
+]);
+
 /** Admin screens that must keep their own URLs. Public `/products` is the storefront. */
 const ADMIN_SLUGS = new Set([
   "account-management",
@@ -22,8 +31,21 @@ export function publicPagePath(slug: string | null | undefined): string {
   if (!bare || bare === "home") return "/";
 
   const head = bare.split("/")[0];
+  if (head === "news" && bare.includes("/")) {
+    const segment = bare.split("/")[1] ?? "";
+    if (segment && !ADMIN_NEWS_SEGMENTS.has(segment)) {
+      return `/${bare}`;
+    }
+  }
+
   if (ADMIN_SLUGS.has(head)) return `/public/${bare}`;
   return `/${bare}`;
+}
+
+/** Public news article URL (slug only, no `news/` prefix). */
+export function publicNewsArticlePath(slug: string | null | undefined): string {
+  const clean = (slug || "").replace(/^\/+|\/+$/g, "").replace(/^news\//, "");
+  return clean ? `/news/${clean}` : "/news";
 }
 
 /** Turn `/public/about-us` menu and content links into `/about-us`. */

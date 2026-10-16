@@ -131,9 +131,9 @@ export const searchSite = async (q: string): Promise<SearchSiteResponse> => {
           try {
             const content = extractText(r);
             const score = ((r.title || '').toLowerCase().includes(lcq) ? 15 : 0) + (content.toLowerCase().split(lcq).length - 1) * 2;
-            articles.push({ id: r.id, title: r.title || r.name, slug: r.slug, excerpt: r.teaser || r.excerpt || undefined, excerptHtml: makeSnippet(content, q), url: r.slug ? `/public/news/${r.slug}` : undefined, type: 'article', raw: r, score });
+            articles.push({ id: r.id, title: r.title || r.name, slug: r.slug, excerpt: r.teaser || r.excerpt || undefined, excerptHtml: makeSnippet(content, q), url: r.slug ? `/news/${String(r.slug).replace(/^news\//, "")}` : undefined, type: 'article', raw: r, score });
           } catch (e) {
-            articles.push({ id: r.id, title: r.title || r.name, slug: r.slug, excerpt: r.teaser || r.excerpt || undefined, url: r.slug ? `/public/news/${r.slug}` : undefined, type: 'article', raw: r });
+            articles.push({ id: r.id, title: r.title || r.name, slug: r.slug, excerpt: r.teaser || r.excerpt || undefined, url: r.slug ? `/news/${String(r.slug).replace(/^news\//, "")}` : undefined, type: 'article', raw: r });
           }
         });
     }
@@ -197,7 +197,7 @@ export const searchSite = async (q: string): Promise<SearchSiteResponse> => {
           if (content.toLowerCase().includes(lcq) || (r.title || '').toLowerCase().includes(lcq)) {
             if (!articles.find(a => String(a.id) === String(r.id))) {
               const score = ((r.title || '').toLowerCase().includes(lcq) ? 25 : 0) + (content.toLowerCase().split(lcq).length - 1) * 3;
-              articles.push({ id: r.id, title: r.title || r.name, slug: r.slug, excerpt: content.slice(0, 200), excerptHtml: makeSnippet(content, q), url: r.slug ? `/public/news/${r.slug}` : undefined, type: 'article', raw: r, score });
+              articles.push({ id: r.id, title: r.title || r.name, slug: r.slug, excerpt: content.slice(0, 200), excerptHtml: makeSnippet(content, q), url: r.slug ? `/news/${String(r.slug).replace(/^news\//, "")}` : undefined, type: 'article', raw: r, score });
             }
           }
         });

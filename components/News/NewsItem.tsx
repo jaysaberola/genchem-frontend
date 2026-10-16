@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { publicNewsArticlePath } from "@/lib/publicPagePath";
 
 export default function NewsItem({ article }: any) {
   const date = new Date(article.date);
@@ -12,7 +13,7 @@ export default function NewsItem({ article }: any) {
         className="pic-blo4 hov-img-zoom bo-rad-10 pos-relative"
         style={{ maxWidth: "720px" }}
       >
-        <Link href={`/public/news/${article.slug}`}>
+        <Link href={publicNewsArticlePath(article.slug)}>
           <img
             src={
               article.thumbnail_url
@@ -38,7 +39,7 @@ export default function NewsItem({ article }: any) {
       <div className="text-blo4 p-t-33">
         <h4 className="p-b-16">
           <Link
-            href={`/public/news/${article.slug}`}
+            href={publicNewsArticlePath(article.slug)}
             className="tit9"
             style={{ textDecoration: "none" }}
           >
@@ -65,7 +66,7 @@ export default function NewsItem({ article }: any) {
         <p>{article.teaser}</p>
 
         <Link
-          href={`/public/news/${article.slug}`}
+          href={publicNewsArticlePath(article.slug)}
           className="dis-block txt4 m-t-30"
           style={{ textDecoration: "none" }}
         >

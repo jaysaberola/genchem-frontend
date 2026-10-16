@@ -82,14 +82,20 @@ export default function NewsDetailPage({ article, isPrivate, privateTitle }: Pro
   );
 }
 
+function normalizeArticleSlug(raw: string | undefined): string {
+  const decoded = decodeURIComponent(raw || "").replace(/^\/+|\/+$/g, "");
+  return decoded.replace(/^news\//, "");
+}
+
 export async function getServerSideProps({ params, query }: any) {
   const previewToken =
     typeof query?.preview_token === "string"
       ? query.preview_token
       : undefined;
+  const articleSlug = normalizeArticleSlug(params.slug);
   try {
     const res = await getArticleBySlug(
-      params.slug,
+      articleSlug,
       previewToken ? { preview_token: previewToken } : undefined,
     );
 
@@ -111,7 +117,7 @@ export async function getServerSideProps({ params, query }: any) {
           pageData: { title: privateInfo.title ?? params.slug },
           article: null,
           isPrivate: true,
-          privateTitle: privateInfo.title ?? params.slug,
+          privateTitle: privateInfo.title ?? articleSlug,
         },
       };
     }

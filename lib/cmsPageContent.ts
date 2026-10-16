@@ -376,6 +376,20 @@ export function rewriteCmsAssetUrls(html: string): string {
       return next === href ? match : `href=${quote}${next}${quote}`;
     },
   );
+
+  // Legacy staging host saved in CMS HTML/menus
+  output = output.replace(
+    /https?:\/\/beta\.genchemph\.com([^"'\s>]*)/gi,
+    (_match, pathPart: string) => {
+      const path = pathPart || "/";
+      const rel = toPublicHref(`http://local${path.startsWith("/") ? path : `/${path}`}`);
+      const base = frontendBase.replace(/\/$/, "");
+      if (rel.startsWith("/") && base) {
+        return `${base}${rel}`;
+      }
+      return rel;
+    },
+  );
   for (const [wrong, right] of Object.entries(productImageFixes)) {
     output = output.replaceAll(wrong, right);
     output = output.replaceAll(`/images/${wrong}`, `/images/genchemph/products/${right}`);

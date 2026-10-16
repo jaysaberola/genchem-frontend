@@ -7,11 +7,13 @@ const nextConfig: NextConfig = {
 			{ source: "/public/about-us", destination: "/about-us", permanent: false },
 			{ source: "/public/contact-us", destination: "/contact-us", permanent: false },
 			{ source: "/public/products", destination: "/products", permanent: false },
+			{ source: "/public/news/:slug", destination: "/news/:slug", permanent: false },
 		];
 	},
 	async rewrites() {
 		return {
 			afterFiles: [
+				{ source: "/news/:slug", destination: "/public/news/:slug" },
 				{ source: "/:slug", destination: "/public/:slug" },
 				{ source: "/product/:slug", destination: "/public/product/:slug" },
 			],

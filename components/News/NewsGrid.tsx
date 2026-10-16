@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { publicNewsArticlePath } from "@/lib/publicPagePath";
 
 const FALLBACK_IMAGE = "/images/genchemph/banners/HOMEPAGE_ABOUT_US.png";
 
@@ -36,7 +37,7 @@ export default function NewsGrid({ articles }: Props) {
 
         return (
           <article key={article.id} className="genchem-news-card">
-            <Link href={`/public/news/${article.slug}`} className="genchem-news-card-image">
+            <Link href={publicNewsArticlePath(article.slug)} className="genchem-news-card-image">
               <img src={image} alt={article.name} loading="lazy" decoding="async" />
             </Link>
 
@@ -47,14 +48,14 @@ export default function NewsGrid({ articles }: Props) {
               </div>
 
               <h3 className="genchem-news-card-title">
-                <Link href={`/public/news/${article.slug}`}>{article.name}</Link>
+                <Link href={publicNewsArticlePath(article.slug)}>{article.name}</Link>
               </h3>
 
               {article.teaser ? (
                 <p className="genchem-news-card-excerpt">{article.teaser}</p>
               ) : null}
 
-              <Link href={`/public/news/${article.slug}`} className="genchem-news-card-action">
+              <Link href={publicNewsArticlePath(article.slug)} className="genchem-news-card-action">
                 Read More
                 <i className="fa fa-angle-right" aria-hidden="true" />
               </Link>

@@ -16,6 +16,7 @@ import {
 } from "@/services/articleService";
 import { useRouter } from "next/router";
 import { buildLegacyNewsRedirect, isLegacyPublicNewsQuery } from "@/lib/newsQuery";
+import { publicNewsArticlePath } from "@/lib/publicPagePath";
 
 type NewsRow = ArticleRow & { slug?: string };
 
@@ -414,7 +415,7 @@ function ManageNews() {
                     toast.error("No slug available to view");
                     return;
                   }
-                  window.open(`/public/news/${row.slug}`, "_blank", "noopener,noreferrer");
+                  window.open(publicNewsArticlePath(row.slug), "_blank", "noopener,noreferrer");
                 }}
               >
                 <i className="fas fa-eye" />
