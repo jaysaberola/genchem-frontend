@@ -91,6 +91,7 @@ export const sendContactMessage = (payload: {
   email: string;
   contact: string;
   message: string;
+  "g-recaptcha-response"?: string;
 }) => {
   if (typeof window !== "undefined") {
     return axiosInstance.post("/api/contact", payload, { baseURL: "" });

@@ -1,5 +1,6 @@
 import { sendContactMessage } from "@/services/publicPageService";
 import { toast } from "@/lib/toast";
+import { getWebsiteSettingsCached } from "@/lib/websiteSettings";
 
 const CONTACT_FIELD_IDS = ["name", "company", "email", "contact", "message"] as const;
 
@@ -8,8 +9,19 @@ type ContactFieldId = (typeof CONTACT_FIELD_IDS)[number];
 declare global {
   interface Window {
     gcSubmitContact?: (event?: Event) => void;
+    grecaptcha?: {
+      render: (container: HTMLElement, parameters: { sitekey: string }) => number;
+      getResponse: (widgetId?: number) => string;
+      reset: (widgetId?: number) => void;
+    };
+    genchemRecaptchaOnload?: () => void;
   }
 }
+
+const RECAPTCHA_SCRIPT_ID = "genchem-recaptcha-api";
+let recaptchaScriptPromise: Promise<void> | null = null;
+let recaptchaWidgetId: number | null = null;
+let recaptchaSiteKey: string | null = null;
 
 function fieldValue(root: ParentNode, id: ContactFieldId): string {
   const byId = root.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${CSS.escape(id)}`);
@@ -106,6 +118,118 @@ function isContactPage(root: ParentNode): boolean {
   return /send us a message/i.test(root.textContent ?? "");
 }
 
+function loadRecaptchaScript(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+  if (window.grecaptcha?.render) return Promise.resolve();
+
+  if (recaptchaScriptPromise) return recaptchaScriptPromise;
+
+  recaptchaScriptPromise = new Promise((resolve, reject) => {
+    const existing = document.getElementById(RECAPTCHA_SCRIPT_ID);
+    if (existing) {
+      if (window.grecaptcha?.render) {
+        resolve();
+        return;
+      }
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", () => reject(new Error("reCAPTCHA failed to load")), {
+        once: true,
+      });
+      return;
+    }
+
+    window.genchemRecaptchaOnload = () => resolve();
+
+    const script = document.createElement("script");
+    script.id = RECAPTCHA_SCRIPT_ID;
+    script.src =
+      "https://www.google.com/recaptcha/api.js?onload=genchemRecaptchaOnload&render=explicit";
+    script.async = true;
+    script.defer = true;
+    script.onerror = () => reject(new Error("reCAPTCHA failed to load"));
+    document.head.appendChild(script);
+  });
+
+  return recaptchaScriptPromise;
+}
+
+function findRecaptchaMount(scope: ParentNode, submitControl: HTMLElement): HTMLElement {
+  const existing =
+    scope.querySelector<HTMLElement>(".g-recaptcha") ??
+    scope.querySelector<HTMLElement>("#genchem-recaptcha");
+  if (existing) return existing;
+
+  const host = document.createElement("div");
+  host.id = "genchem-recaptcha";
+  host.className = "g-recaptcha my-3";
+
+  const anchor =
+    submitControl.closest(".text-center") ??
+    submitControl.parentElement ??
+    (scope instanceof Element ? scope : null);
+  if (anchor instanceof Element) {
+    anchor.insertAdjacentElement("beforebegin", host);
+  } else {
+    submitControl.insertAdjacentElement("beforebegin", host);
+  }
+  return host;
+}
+
+async function ensureRecaptcha(root: ParentNode, submitControl: HTMLElement): Promise<boolean> {
+  try {
+    const settings = await getWebsiteSettingsCached();
+    const siteKey = (settings.google_recaptcha_sitekey as string | undefined)?.trim() ?? "";
+    if (!siteKey) return true;
+
+    recaptchaSiteKey = siteKey;
+    await loadRecaptchaScript();
+
+    const scope = findFormScope(root);
+    const mount = findRecaptchaMount(scope, submitControl);
+
+    if (recaptchaWidgetId === null && window.grecaptcha?.render) {
+      mount.innerHTML = "";
+      recaptchaWidgetId = window.grecaptcha.render(mount, { sitekey: siteKey });
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function getRecaptchaResponse(): string {
+  if (recaptchaWidgetId === null || !window.grecaptcha) return "";
+  return window.grecaptcha.getResponse(recaptchaWidgetId)?.trim() ?? "";
+}
+
+function resetRecaptcha(): void {
+  if (recaptchaWidgetId !== null && window.grecaptcha) {
+    window.grecaptcha.reset(recaptchaWidgetId);
+  }
+}
+
+function formatContactSubmitError(err: unknown): string {
+  const response = (err as { response?: { data?: Record<string, unknown>; status?: number } })
+    ?.response;
+  const data = response?.data;
+  if (data && typeof data === "object") {
+    const errors = data.errors as Record<string, string[] | string> | undefined;
+    if (errors) {
+      const captcha = errors["g-recaptcha-response"];
+      if (captcha) {
+        return Array.isArray(captcha) ? captcha[0] : captcha;
+      }
+      const first = Object.values(errors)[0];
+      if (first) return Array.isArray(first) ? first[0] : first;
+    }
+    if (typeof data.message === "string" && data.message.trim()) {
+      return data.message;
+    }
+  }
+  return "Failed to send your message. Please try again later.";
+}
+
 export function patchContactUsForm(html: string): string {
   if (!html.includes('id="name"') && !html.includes("id='name'") && !/send us a message/i.test(html)) {
     return html;
@@ -170,23 +294,46 @@ async function submitContactForm(root: ParentNode): Promise<void> {
     return;
   }
 
+  const recaptchaReady = await ensureRecaptcha(root, button);
+  if (!recaptchaReady) {
+    const msg = "Unable to load the security check. Please refresh and try again.";
+    toast.error(msg);
+    showInlineStatus(statusHost, msg, "error");
+    return;
+  }
+
+  const recaptchaResponse = recaptchaSiteKey ? getRecaptchaResponse() : "";
+  if (recaptchaSiteKey && !recaptchaResponse) {
+    const msg = "Please complete the captcha.";
+    toast.error(msg);
+    showInlineStatus(statusHost, msg, "error");
+    return;
+  }
+
   button.dataset.genchemSending = "1";
   button.classList.add("is-loading");
   button.disabled = true;
   hideInlineStatus(statusHost);
 
   try {
-    const res = await sendContactMessage({ name, company, email, contact, message });
+    const res = await sendContactMessage({
+      name,
+      company,
+      email,
+      contact,
+      message,
+      ...(recaptchaResponse ? { "g-recaptcha-response": recaptchaResponse } : {}),
+    });
     const msg = res.data?.message ?? "Your message has been sent successfully.";
     toast.success(msg);
     showInlineStatus(statusHost, msg, "success");
     clearFields(root, CONTACT_FIELD_IDS);
+    resetRecaptcha();
   } catch (err: unknown) {
-    const msg =
-      (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-      "Failed to send your message. Please try again later.";
+    const msg = formatContactSubmitError(err);
     toast.error(msg);
     showInlineStatus(statusHost, msg, "error");
+    resetRecaptcha();
   } finally {
     delete button.dataset.genchemSending;
     button.classList.remove("is-loading");
@@ -211,6 +358,8 @@ function bindContactForm(root: ParentNode): (() => void) | null {
   };
 
   button.addEventListener("click", onSubmit);
+  void ensureRecaptcha(root, button);
+
   return () => {
     button.removeEventListener("click", onSubmit);
     delete button.dataset.genchemContactBound;

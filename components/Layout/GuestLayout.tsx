@@ -17,6 +17,7 @@ import {
   GoToTop,
   ToastHost,
 } from "@/lib/publicClientComponents";
+import WebsiteAnalyticsHead from "@/components/Layout/WebsiteAnalyticsHead";
 import WebsiteFaviconHead from "@/components/Layout/WebsiteFaviconHead";
 
 interface LandingPageLayoutProps {
@@ -78,6 +79,7 @@ export default function LandingPageLayout({
   return (
     <div className="genchemph stretched has-plugin-html5video">
       <WebsiteFaviconHead />
+      <WebsiteAnalyticsHead />
       <Head>
         <title>{documentTitle}</title>
         {metaDescription ? (
