@@ -17,7 +17,7 @@ import {
   GoToTop,
   ToastHost,
 } from "@/lib/publicClientComponents";
-import WebsiteAnalyticsHead from "@/components/Layout/WebsiteAnalyticsHead";
+import GoogleAnalyticsScripts from "@/components/Layout/GoogleAnalyticsScripts";
 import WebsiteFaviconHead from "@/components/Layout/WebsiteFaviconHead";
 
 interface LandingPageLayoutProps {
@@ -31,6 +31,7 @@ interface LandingPageLayoutProps {
     hideFooter?: boolean;
   };
   footerData?: Pick<PublicPage, "content" | "json" | "styles"> | null;
+  googleAnalytics?: string | null;
 }
 
 function shouldOverlayHero(pageData?: LandingPageLayoutProps["pageData"]): boolean {
@@ -48,6 +49,7 @@ export default function LandingPageLayout({
   pageData,
   layout,
   footerData,
+  googleAnalytics,
 }: LandingPageLayoutProps) {
   const overlayHero = shouldOverlayHero(pageData);
   const isHomeBanner = pageData?.album?.type === "main_banner";
@@ -79,7 +81,6 @@ export default function LandingPageLayout({
   return (
     <div className="genchemph stretched has-plugin-html5video">
       <WebsiteFaviconHead />
-      <WebsiteAnalyticsHead />
       <Head>
         <title>{documentTitle}</title>
         {metaDescription ? (
@@ -121,6 +122,7 @@ export default function LandingPageLayout({
       <ToastHost />
       <GenchemCmsRuntime />
       <PublicScripts />
+      <GoogleAnalyticsScripts snippet={googleAnalytics} />
     </div>
   );
 }
