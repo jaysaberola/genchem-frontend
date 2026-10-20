@@ -10,6 +10,7 @@ export const PUBLIC_LOCAL_STYLESHEETS = [
   "/css/public-css.css",
   "/css/product.css",
   "/css/banner.css",
+  "/css/animate.min.css",
   "/css/navigation.css",
   "/css/genchem-theme.css?v=5",
   "/css/genchemph-design.css",

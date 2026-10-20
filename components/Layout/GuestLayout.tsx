@@ -87,7 +87,6 @@ export default function LandingPageLayout({
           <meta name="description" content={metaDescription} />
         ) : null}
         {metaKeywords ? <meta name="keywords" content={metaKeywords} /> : null}
-        <link rel="stylesheet" href="/css/animate.min.css" />
       </Head>
       <Header overlayHero={overlayHero} />
 

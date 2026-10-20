@@ -426,6 +426,12 @@ function WebsiteSettingsPage() {
                   value={recaptcha}
                   onChange={(e) => setRecaptcha(e.target.value)}
                 />
+                <p className="form-text text-muted small mb-0">
+                  Use a <strong>reCAPTCHA v2</strong> (&quot;I&apos;m not a robot&quot; checkbox) site key
+                  unless the server sets <code>RECAPTCHA_VERSION=v3</code> in Laravel{" "}
+                  <code>.env</code> for v3 keys. Pair with the matching secret in{" "}
+                  <code>RECAPTCHA_SECRET_KEY</code> or Website Settings.
+                </p>
               </div>
 
               <button

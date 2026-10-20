@@ -6,6 +6,8 @@ const CONTACT_FIELD_IDS = ["name", "company", "email", "contact", "message"] as 
 
 type ContactFieldId = (typeof CONTACT_FIELD_IDS)[number];
 
+type RecaptchaVersion = "v2" | "v3";
+
 declare global {
   interface Window {
     gcSubmitContact?: (event?: Event) => void;
@@ -13,6 +15,8 @@ declare global {
       render: (container: HTMLElement, parameters: { sitekey: string }) => number;
       getResponse: (widgetId?: number) => string;
       reset: (widgetId?: number) => void;
+      ready: (callback: () => void) => void;
+      execute: (siteKey: string, options: { action: string }) => Promise<string>;
     };
     genchemRecaptchaOnload?: () => void;
   }
@@ -22,6 +26,8 @@ const RECAPTCHA_SCRIPT_ID = "genchem-recaptcha-api";
 let recaptchaScriptPromise: Promise<void> | null = null;
 let recaptchaWidgetId: number | null = null;
 let recaptchaSiteKey: string | null = null;
+let recaptchaVersion: RecaptchaVersion = "v2";
+let recaptchaV3ScriptKey: string | null = null;
 
 function fieldValue(root: ParentNode, id: ContactFieldId): string {
   const byId = root.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${CSS.escape(id)}`);
@@ -118,7 +124,14 @@ function isContactPage(root: ParentNode): boolean {
   return /send us a message/i.test(root.textContent ?? "");
 }
 
-function loadRecaptchaScript(): Promise<void> {
+function parseRecaptchaVersion(raw: unknown): RecaptchaVersion {
+  const value = String(raw ?? "v2")
+    .trim()
+    .toLowerCase();
+  return value === "v3" || value === "3" || value === "score" ? "v3" : "v2";
+}
+
+function loadRecaptchaScriptV2(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
   if (window.grecaptcha?.render) return Promise.resolve();
 
@@ -153,6 +166,36 @@ function loadRecaptchaScript(): Promise<void> {
   return recaptchaScriptPromise;
 }
 
+function loadRecaptchaScriptV3(siteKey: string): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+  if (window.grecaptcha?.execute && recaptchaV3ScriptKey === siteKey) {
+    return Promise.resolve();
+  }
+
+  recaptchaScriptPromise = new Promise((resolve, reject) => {
+    const scriptUrl = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${scriptUrl}"]`);
+    if (existing) {
+      window.grecaptcha?.ready(() => resolve());
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = RECAPTCHA_SCRIPT_ID;
+    script.src = scriptUrl;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      recaptchaV3ScriptKey = siteKey;
+      window.grecaptcha?.ready(() => resolve());
+    };
+    script.onerror = () => reject(new Error("reCAPTCHA failed to load"));
+    document.head.appendChild(script);
+  });
+
+  return recaptchaScriptPromise;
+}
+
 function findRecaptchaMount(scope: ParentNode, submitControl: HTMLElement): HTMLElement {
   const existing =
     scope.querySelector<HTMLElement>(".g-recaptcha") ??
@@ -177,18 +220,26 @@ function findRecaptchaMount(scope: ParentNode, submitControl: HTMLElement): HTML
 
 async function ensureRecaptcha(root: ParentNode, submitControl: HTMLElement): Promise<boolean> {
   try {
-    const settings = await getWebsiteSettingsCached();
+    const settings = await getWebsiteSettingsCached({ force: true });
     const siteKey = (settings.google_recaptcha_sitekey as string | undefined)?.trim() ?? "";
     if (!siteKey) return true;
 
     recaptchaSiteKey = siteKey;
-    await loadRecaptchaScript();
+    recaptchaVersion = parseRecaptchaVersion(settings.google_recaptcha_version);
+
+    if (recaptchaVersion === "v3") {
+      await loadRecaptchaScriptV3(siteKey);
+      return true;
+    }
+
+    await loadRecaptchaScriptV2();
 
     const scope = findFormScope(root);
     const mount = findRecaptchaMount(scope, submitControl);
 
     if (recaptchaWidgetId === null && window.grecaptcha?.render) {
       mount.innerHTML = "";
+      mount.removeAttribute("data-sitekey");
       recaptchaWidgetId = window.grecaptcha.render(mount, { sitekey: siteKey });
     }
 
@@ -198,8 +249,19 @@ async function ensureRecaptcha(root: ParentNode, submitControl: HTMLElement): Pr
   }
 }
 
-function getRecaptchaResponse(): string {
-  if (recaptchaWidgetId === null || !window.grecaptcha) return "";
+async function getRecaptchaResponse(): Promise<string> {
+  if (!recaptchaSiteKey || !window.grecaptcha) return "";
+
+  if (recaptchaVersion === "v3") {
+    try {
+      await loadRecaptchaScriptV3(recaptchaSiteKey);
+      return (await window.grecaptcha.execute(recaptchaSiteKey, { action: "contact" })).trim();
+    } catch {
+      return "";
+    }
+  }
+
+  if (recaptchaWidgetId === null) return "";
   return window.grecaptcha.getResponse(recaptchaWidgetId)?.trim() ?? "";
 }
 
@@ -236,6 +298,15 @@ export function patchContactUsForm(html: string): string {
   }
 
   let output = html;
+
+  output = output.replace(
+    /<script\b[^>]*\bsrc=["'][^"']*recaptcha\/api\.js[^"']*["'][^>]*>\s*<\/script>/gi,
+    "",
+  );
+  output = output.replace(
+    /<div\b[^>]*\bg-recaptcha\b[^>]*>[\s\S]*?<\/div>/gi,
+    '<div id="genchem-recaptcha" class="g-recaptcha my-3"></div>',
+  );
 
   output = output.replace(
     /<a\b([^>]*?)href=["'](?:#|javascript:void\(0\)|javascript:;)["']([^>]*?)>\s*submit\s*<\/a>/gi,
@@ -302,7 +373,7 @@ async function submitContactForm(root: ParentNode): Promise<void> {
     return;
   }
 
-  const recaptchaResponse = recaptchaSiteKey ? getRecaptchaResponse() : "";
+  const recaptchaResponse = recaptchaSiteKey ? await getRecaptchaResponse() : "";
   if (recaptchaSiteKey && !recaptchaResponse) {
     const msg = "Please complete the captcha.";
     toast.error(msg);
