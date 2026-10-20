@@ -365,17 +365,22 @@ async function submitContactForm(root: ParentNode): Promise<void> {
     return;
   }
 
-  const recaptchaReady = await ensureRecaptcha(root, button);
-  if (!recaptchaReady) {
-    const msg = "Unable to load the security check. Please refresh and try again.";
-    toast.error(msg);
-    showInlineStatus(statusHost, msg, "error");
-    return;
+  if (!recaptchaSiteKey || (recaptchaVersion === "v2" && recaptchaWidgetId === null)) {
+    const recaptchaReady = await ensureRecaptcha(root, button);
+    if (!recaptchaReady) {
+      const msg = "Unable to load the security check. Please refresh and try again.";
+      toast.error(msg);
+      showInlineStatus(statusHost, msg, "error");
+      return;
+    }
   }
 
   const recaptchaResponse = recaptchaSiteKey ? await getRecaptchaResponse() : "";
   if (recaptchaSiteKey && !recaptchaResponse) {
-    const msg = "Please complete the captcha.";
+    const msg =
+      recaptchaVersion === "v2"
+        ? "Please check the captcha box, then submit again right away."
+        : "Please complete the captcha.";
     toast.error(msg);
     showInlineStatus(statusHost, msg, "error");
     return;
