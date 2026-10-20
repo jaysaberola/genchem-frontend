@@ -1,10 +1,15 @@
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
-import { resolvePagePresentation } from "@/lib/cmsPageContent";
 import { CmsHtmlBlock } from "@/lib/publicClientComponents";
+import {
+  buildSlimPublicPageProps,
+  type PublicPageShell,
+} from "@/lib/publicPageServerProps";
 
 interface AboutUsPageProps {
-  pageData: PublicPage;
+  pageShell: PublicPageShell;
+  cmsHtml: string;
+  cmsCss: string;
   footerData?: Pick<PublicPage, "content" | "json" | "styles"> | null;
 }
 
@@ -19,9 +24,10 @@ export async function getServerSideProps() {
 
     return {
       props: {
-        pageData: pageRes.data,
-        footerData: footerRes.data ?? null,
-        layout: { fullWidth: true },
+        ...buildSlimPublicPageProps(pageRes.data, {
+          footerData: footerRes.data ?? null,
+          layout: { fullWidth: true },
+        }),
       },
     };
   } catch {
@@ -29,15 +35,13 @@ export async function getServerSideProps() {
   }
 }
 
-export default function AboutUsPage({ pageData }: AboutUsPageProps) {
-  const { htmlContent, css } = resolvePagePresentation(pageData);
-
+export default function AboutUsPage({ cmsHtml, cmsCss }: AboutUsPageProps) {
   return (
     <div className="w-100 base-content">
-      {htmlContent ? (
+      {cmsHtml ? (
         <CmsHtmlBlock
-          html={htmlContent}
-          css={css}
+          html={cmsHtml}
+          css={cmsCss}
           styleId="cms-about-us-styles"
           className="w-100 page-content cms-content public-page-content"
         />

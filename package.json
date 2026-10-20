@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 127.0.0.1 -p 3002",
+    "dev": "cross-env PRETTY_HTML=true next dev -H 127.0.0.1 -p 3002",
+    "dev:fast": "next dev -H 127.0.0.1 -p 3002",
     "build": "next build",
-    "start": "next start",
+    "start": "cross-env NODE_ENV=production PRETTY_HTML=true node server.js",
+    "start:next": "next start -H 127.0.0.1 -p 3002",
     "lint": "eslint"
   },
   "dependencies": {
@@ -37,6 +39,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.22",
+    "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "15.3.6",
     "postcss": "^8.5.6",

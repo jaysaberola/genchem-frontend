@@ -2,8 +2,11 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
-import { resolvePagePresentation } from "@/lib/cmsPageContent";
 import { activateTabFromHash, registerGenchemTabs } from "@/lib/genchemTabs";
+import {
+  buildSlimPublicPageProps,
+  type PublicPageShell,
+} from "@/lib/publicPageServerProps";
 import { initGenchemProductCards } from "@/lib/genchemProductCards";
 import { initGenchemVideos } from "@/lib/genchemMedia";
 import { CmsHtmlBlock } from "@/lib/publicClientComponents";
@@ -21,7 +24,9 @@ function scheduleProductCards(): void {
 }
 
 interface ProductsPageProps {
-  pageData: PublicPage;
+  pageShell: PublicPageShell;
+  cmsHtml: string;
+  cmsCss: string;
   footerData?: Pick<PublicPage, "content" | "json" | "styles"> | null;
 }
 
@@ -36,9 +41,10 @@ export async function getServerSideProps() {
 
     return {
       props: {
-        pageData: pageRes.data,
-        footerData: footerRes.data ?? null,
-        layout: { fullWidth: true },
+        ...buildSlimPublicPageProps(pageRes.data, {
+          footerData: footerRes.data ?? null,
+          layout: { fullWidth: true },
+        }),
       },
     };
   } catch {
@@ -46,9 +52,10 @@ export async function getServerSideProps() {
   }
 }
 
-export default function ProductsPage({ pageData }: ProductsPageProps) {
+export default function ProductsPage({ cmsHtml, cmsCss }: ProductsPageProps) {
   const router = useRouter();
-  const { htmlContent, css } = resolvePagePresentation(pageData);
+  const htmlContent = cmsHtml;
+  const css = cmsCss;
 
   useEffect(() => {
     document.body.classList.add("genchem-products-active");

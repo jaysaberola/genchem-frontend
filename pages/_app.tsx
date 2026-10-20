@@ -35,16 +35,47 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   };
 };
 
+function splitPublicPageProps(pageProps: AppProps["pageProps"]) {
+  const raw = pageProps as Record<string, unknown>;
+  if (!raw || typeof raw !== "object" || !("pageShell" in raw)) {
+    return { layoutProps: pageProps, componentProps: pageProps };
+  }
+
+  const {
+    cmsHtml: _cmsHtml,
+    cmsCss: _cmsCss,
+    pageShell,
+    footerData,
+    layout,
+    isPrivate,
+    privateTitle,
+    googleAnalytics,
+    ...rest
+  } = raw;
+
+  return {
+    layoutProps: {
+      pageData: pageShell,
+      footerData,
+      layout,
+      googleAnalytics,
+      ...rest,
+    },
+    componentProps: pageProps,
+  };
+}
+
 export default function MyApp({
   Component,
   pageProps,
   googleAnalyticsSnippet,
 }: AppPropsWithLayout) {
   const Layout = Component.Layout || React.Fragment;
+  const { layoutProps: baseLayoutProps, componentProps } = splitPublicPageProps(pageProps);
   const layoutProps = {
-    ...pageProps,
+    ...baseLayoutProps,
     googleAnalytics:
-      (pageProps as { googleAnalytics?: string | null }).googleAnalytics ??
+      (baseLayoutProps as { googleAnalytics?: string | null }).googleAnalytics ??
       googleAnalyticsSnippet ??
       null,
   };
@@ -62,7 +93,7 @@ export default function MyApp({
         </Head>
 
 
-        <Component {...pageProps} />
+        <Component {...componentProps} />
 
         {process.env.NODE_ENV === "production" && (
           <Script

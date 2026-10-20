@@ -5,7 +5,7 @@ export interface CmsHtmlBlockProps {
   styleId?: string;
 }
 
-/** Renders CMS HTML/CSS on the client only to avoid hydration mismatches. */
+/** Renders CMS HTML/CSS (SSR + client) for readable view-source and SEO. */
 export default function CmsHtmlBlock({
   html,
   css,
@@ -18,7 +18,11 @@ export default function CmsHtmlBlock({
     <>
       {css ? <style id={styleId} dangerouslySetInnerHTML={{ __html: css }} /> : null}
       {html ? (
-        <div className={className} dangerouslySetInnerHTML={{ __html: html }} />
+        <div
+          className={className}
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
       ) : null}
     </>
   );

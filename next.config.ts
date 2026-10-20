@@ -53,7 +53,8 @@ const nextConfig: NextConfig = {
 				...cmsApiRewrites,
 				...cmsUploadRewrites,
 				{ source: "/news/:slug", destination: "/public/news/:slug" },
-				{ source: "/:slug", destination: "/public/:slug" },
+				// Slugs only (no dots) — avoids rewriting favicon.ico, robots.txt, etc.
+				{ source: "/:slug((?!favicon\\.ico|robots\\.txt|sitemap\\.xml)[\\w-]+)", destination: "/public/:slug" },
 				{ source: "/product/:slug", destination: "/public/product/:slug" },
 			],
 		};

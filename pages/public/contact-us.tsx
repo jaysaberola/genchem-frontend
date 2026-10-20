@@ -1,12 +1,18 @@
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
-import { resolvePagePresentation } from "@/lib/cmsPageContent";
 import { initGenchemContactForm, patchContactUsForm } from "@/lib/genchemContactForm";
 import { CmsHtmlBlock } from "@/lib/publicClientComponents";
+import { formatCmsHtmlForViewSource } from "@/lib/formatCmsMarkup";
+import {
+  buildSlimPublicPageProps,
+  type PublicPageShell,
+} from "@/lib/publicPageServerProps";
 import { useEffect } from "react";
 
 interface ContactUsPageProps {
-  pageData: PublicPage;
+  pageShell: PublicPageShell;
+  cmsHtml: string;
+  cmsCss: string;
   footerData?: Pick<PublicPage, "content" | "json" | "styles"> | null;
 }
 
@@ -19,11 +25,15 @@ export async function getServerSideProps() {
 
     if (!pageRes.data) return { notFound: true };
 
+    const slim = buildSlimPublicPageProps(pageRes.data, {
+      footerData: footerRes.data ?? null,
+      layout: { fullWidth: true, hideFooter: true },
+    });
+
     return {
       props: {
-        pageData: pageRes.data,
-        footerData: footerRes.data ?? null,
-        layout: { fullWidth: true, hideFooter: true },
+        ...slim,
+        cmsHtml: formatCmsHtmlForViewSource(patchContactUsForm(slim.cmsHtml)),
       },
     };
   } catch {
@@ -31,20 +41,17 @@ export async function getServerSideProps() {
   }
 }
 
-export default function ContactUsPage({ pageData }: ContactUsPageProps) {
-  const { htmlContent, css } = resolvePagePresentation(pageData);
-  const content = patchContactUsForm(htmlContent);
-
+export default function ContactUsPage({ cmsHtml, cmsCss }: ContactUsPageProps) {
   useEffect(() => {
     initGenchemContactForm();
-  }, [content]);
+  }, [cmsHtml]);
 
   return (
     <div className="w-100 base-content genchem-contact-us-page public-contact">
-      {content ? (
+      {cmsHtml ? (
         <CmsHtmlBlock
-          html={content}
-          css={css}
+          html={cmsHtml}
+          css={cmsCss}
           styleId="cms-contact-us-styles"
           className="w-100 page-content cms-content public-page-content"
         />

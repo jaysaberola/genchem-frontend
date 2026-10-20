@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
-import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
+import { getPublicPageBySlug } from "@/services/publicPageService";
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import { registerGenchemTabs } from "@/lib/genchemTabs";
 import { initGenchemVideos } from "@/lib/genchemMedia";
 import { initGenchemTrustBar } from "@/lib/genchemTrustBar";
-import { resolvePagePresentation } from "@/lib/cmsPageContent";
 import { CmsHtmlBlock } from "@/lib/publicClientComponents";
+import {
+  buildSlimPublicPageProps,
+  type PublicPageShell,
+} from "@/lib/publicPageServerProps";
 
 export const BANNER_TITLE = "GENCHEM PH";
 
@@ -16,18 +19,33 @@ export async function getPublicHomeProps() {
             getPublicPageBySlug("footer"),
         ]);
 
+        if (!pageRes.data) {
+            return {
+                props: {
+                    pageShell: null,
+                    cmsHtml: "",
+                    cmsCss: "",
+                    footerData: footerRes.data ?? null,
+                    layout: { fullWidth: true },
+                },
+            };
+        }
+
         return {
             props: {
-                pageData: pageRes.data ?? null,
-                footerData: footerRes.data ?? null,
-                layout: { fullWidth: true },
+                ...buildSlimPublicPageProps(pageRes.data, {
+                    footerData: footerRes.data ?? null,
+                    layout: { fullWidth: true },
+                }),
             },
         };
     } catch (error) {
         console.error("Error fetching page data:", error);
         return {
             props: {
-                pageData: null,
+                pageShell: null,
+                cmsHtml: "",
+                cmsCss: "",
                 footerData: null,
                 layout: { fullWidth: true },
             },
@@ -35,17 +53,18 @@ export async function getPublicHomeProps() {
     }
 }
 
-interface LandingPageLayoutProps {
-  pageData?: PublicPage;
+interface PublicHomePageProps {
+  pageShell?: PublicPageShell | null;
+  cmsHtml?: string;
+  cmsCss?: string;
   layout?: {
     fullWidth?: boolean;
   };
 }
 
-export default function PublicHomePage({ pageData }: LandingPageLayoutProps) {
-    const { htmlContent, css } = pageData
-        ? resolvePagePresentation(pageData)
-        : { htmlContent: "", css: "" };
+export default function PublicHomePage({ cmsHtml = "", cmsCss = "" }: PublicHomePageProps) {
+    const htmlContent = cmsHtml;
+    const css = cmsCss;
 
     useEffect(() => {
         const cleanup = registerGenchemTabs();

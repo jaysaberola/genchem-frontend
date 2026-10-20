@@ -1,32 +1,43 @@
 import LandingPageLayout from "@/components/Layout/GuestLayout";
 import PrivateContentNotice from "@/components/Cms/PrivateContentNotice";
-import { getPublicPageBySlug, PublicPage } from "@/services/publicPageService";
-import { resolvePagePresentation } from "@/lib/cmsPageContent";
+import { getPublicPageBySlug } from "@/services/publicPageService";
 import { getPrivateContentFromError } from "@/lib/cmsPrivateContent";
 import { CmsHtmlBlock } from "@/lib/publicClientComponents";
+import {
+  buildSlimPublicPageProps,
+  type PublicPageShell,
+} from "@/lib/publicPageServerProps";
 
 interface PublicPageViewProps {
-  pageData: PublicPage | null;
+  pageShell?: PublicPageShell | null;
+  cmsHtml?: string;
+  cmsCss?: string;
   isPrivate?: boolean;
   privateTitle?: string;
 }
 
-export default function PublicPageView({ pageData, isPrivate, privateTitle }: PublicPageViewProps) {
+export default function PublicPageView({
+  pageShell,
+  cmsHtml = "",
+  cmsCss = "",
+  isPrivate,
+  privateTitle,
+}: PublicPageViewProps) {
   if (isPrivate) {
     return <PrivateContentNotice title={privateTitle} kind="page" />;
   }
 
-  if (!pageData) return <div className="container py-5 text-center text-secondary">Page not found</div>;
-
-  const { htmlContent, css: cssStyles } = resolvePagePresentation(pageData);
+  if (!pageShell) {
+    return <div className="container py-5 text-center text-secondary">Page not found</div>;
+  }
 
   return (
     <>
-      {htmlContent ? (
+      {cmsHtml ? (
         <CmsHtmlBlock
-          html={htmlContent}
-          css={cssStyles}
-          styleId={`page-styles-${pageData.slug ?? pageData.id}`}
+          html={cmsHtml}
+          css={cmsCss}
+          styleId={`page-styles-${pageShell.slug ?? pageShell.id}`}
           className="public-page-content cms-content"
         />
       ) : (
@@ -53,13 +64,14 @@ export async function getServerSideProps(context: any) {
 
     return {
       props: {
-        pageData,
-        isPrivate: false,
-        footerData: footerRes.data ?? null,
-        layout: {
-          fullWidth: true,
-          hideFooter: page === "footer",
-        },
+        ...buildSlimPublicPageProps(pageData, {
+          isPrivate: false,
+          footerData: footerRes.data ?? null,
+          layout: {
+            fullWidth: true,
+            hideFooter: page === "footer",
+          },
+        }),
       },
     };
   } catch (error) {
@@ -67,7 +79,9 @@ export async function getServerSideProps(context: any) {
     if (privateInfo) {
       return {
         props: {
-          pageData: null,
+          pageShell: null,
+          cmsHtml: "",
+          cmsCss: "",
           isPrivate: true,
           privateTitle: privateInfo.title ?? page,
           footerData: null,
